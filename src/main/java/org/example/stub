@@ -1,0 +1,181 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+class Person {
+    private String name;
+    private int age;
+    private double height;
+
+    public Person(String name, int age, double height) {
+        this.name = name;
+        this.age = age;
+        this.height = height;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+}
+
+public class FileDataReader {
+
+    public static void main(String[] args) {
+        String filePath = "data.txt"; // Replace with the path to your file
+
+        List<Person> people = readDataFromFile(filePath);
+
+        // Displaying the read data
+        for (Person person : people) {
+            System.out.println("Name: " + person.getName() + ", Age: " + person.getAge() + ", Height: " + person.getHeight());
+        }
+
+        // Creating and writing additional data to the file
+        List<Person> newPeople = createNewPeople();
+        writeDataToFile(filePath, newPeople);
+    }
+
+    private static List<Person> readDataFromFile(String filePath) {
+        List<Person> people = new ArrayList<>();
+
+        try {
+            File file = new File(filePath);
+
+            if (!file.exists()) {
+                createFileWithHeader(filePath);
+            }
+
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                boolean headerSkipped = false;
+
+                while ((line = br.readLine()) != null) {
+                    if (!headerSkipped) {
+                        // Skip the header line
+                        headerSkipped = true;
+                        continue;
+                    }
+
+                    String[] data = line.split("\t");
+
+                    if (data.length == 3) {
+                        String name = data[0];
+                        int age = Integer.parseInt(data[1]);
+                        double height = Double.parseDouble(data[2]);
+
+                        Person person = new Person(name, age, height);
+                        people.add(person);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return people;
+    }
+
+    private static void writeDataToFile(String filePath, List<Person> newPeople) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true))) {
+            for (Person person : newPeople) {
+                bw.write(person.getName() + "\t" + person.getAge() + "\t" + person.getHeight());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void createFileWithHeader(String filePath) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+            bw.write("Name\tAge\tHeight");
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static List<Person> createNewPeople() {
+        List<Person> newPeople = new ArrayList<>();
+
+        // Creating new Person objects
+        Person person1 = new Person("Sophia", 35, 5.4);
+        Person person2 = new Person("Michael", 40, 6.0);
+
+        newPeople.add(person1);
+        newPeople.add(person2);
+
+        return newPeople;
+    }
+}
+
+
+public void updateRecord(Path path, Path outFile) throws IOException {
+    viewSingleRecord(path);
+
+    List<Department> updatedRecord = new ArrayList<>();
+
+    System.out.println("Enter the new details of the Department's record in the order of {Department Code, Department Name, Regular Pay Rate, Overtime Pay Rate}");
+
+    // Assuming the department code to be updated is stored in 'updateCode'
+    String updateCode = input.nextLine();
+
+    // Input the updated record details
+    System.out.print("\nEnter department code: ");
+    setDepartmentCode(input.nextLine());
+    System.out.print("\nEnter department name: ");
+    setDepartmentName(input.nextLine());
+    System.out.print("\nEnter the department's regular pay rate: ");
+    setRegularRate(input.nextFloat());
+    System.out.print("\nEnter the department's overtime pay rate: ");
+    setOvertimeRate(input.nextFloat());
+
+    Department updatedDepartment = new Department(getDepartmentCode(), getDepartmentName(), getRegularRate(), getOvertimeRate());
+    updatedRecord.add(updatedDepartment);
+
+    // Create a temporary file to write the updated content
+    File tempFile = new File("tempFile.txt");
+    BufferedWriter tempWriter = new BufferedWriter(new FileWriter(tempFile));
+
+    try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()))) {
+        String line;
+        boolean headerSkipped = false;
+
+        // Write the header line to the temporary file
+        tempWriter.write(bufferedReader.readLine() + System.lineSeparator());
+
+        while ((line = bufferedReader.readLine()) != null) {
+            String[] fileContent = line.split("\t");
+
+            if (fileContent.length >= 1 && fileContent[0].equals(updateCode)) {
+                // Skip writing outdated record
+                continue;
+            }
+
+            tempWriter.write(line + System.lineSeparator());
+        }
+
+        // Append the updated record to the temporary file
+        for (Department department : updatedRecord) {
+            tempWriter.write(department.getDepartmentCode() + "\t" + department.getDepartmentName() + "\t"
+                    + department.getRegularRate() + "\t" + department.getOvertimeRate());
+            tempWriter.newLine();
+        }
+    } catch (IOException e) {
+        System.out.println("An error occurred.\n" + e);
+    } finally {
+        tempWriter.close();
+    }
+
+    // Copy the temporary file content to the original output file
+    Files.copy(tempFile.toPath(), outFile, StandardCopyOption.REPLACE_EXISTING);
+    tempFile.delete(); // Remove the temporary file
+}
