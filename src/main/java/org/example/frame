@@ -1,0 +1,43 @@
+Payroll
+
+- Processed Date
+- Randomly generated cheque number (6 character length)
+
+: Methods
+    - Create Record
+    - Calculate payroll
+
+: Description
+    - Each record is a processed payroll for an Employee.
+    - Payroll is calculated using data read from the Employee and Departments data files.
+    - Payroll data includes the ID Number, Name, Department Code, Position, Hours Worked, Regular Pay, Overtime Pay and Gross Pay
+    - Payroll records must also display the date of processing and the unique cheque number.
+
+
+Employee
+
+- TRN
+- NIS
+- DOB
+- DOE
+
+
+Process All Employees w/ Intervention
+
+: Methods
+    - Sequentially read records from the Departments file. Get the Department Code, Regular Rate and Overtime Rate.
+    - Access the Employees file and search for all Employees with the Department Code of the Departments record just read.
+    - Calculate the Regular Pay, Overtime Pay and Gross Pay of the Employee.
+
+
+Error Checks
+
+: Employee
+    - User enters a Department Code that does not exist in the Departments file.
+    - User enters an ID Number that is less than greater than 7 characters.
+    - User enters an ID Number that contains non-numeric values.
+    - User enters a Department Code that is not the leading 4 characters of their ID Number.
+    - User enters a First Name, Last Name or Position that contains non-alphabetic values.
+    - User enters any alphabetic character in a differing case.
+    - User enters a position that is typically held by one person when a record already exists.
+

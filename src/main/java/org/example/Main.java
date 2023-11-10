@@ -7,10 +7,16 @@ import java.nio.file.Paths;
 public class Main {
     public static void main(String[] args) throws IOException {
         Department department = new Department();
-        Path path = Paths.get("departments.txt");
-//        department.fileProcessing(department.createRecord(), path);
-//        department.viewAllRecords(path);
-//        department.viewSingleRecord(path);
-        department.updateRecord(path, path);
+        Employee employee = new Employee();
+        Payroll payroll = new Payroll();
+        Path deptPath = Paths.get("departments.txt");
+        Path empPath = Paths.get("employee.txt");
+        Path payPath = Paths.get("payroll.txt");
+
+//        department.viewSingleRecord(deptPath);
+//        employee.viewAllEmployees(empPath);
+        employee.viewSingleEmployee(empPath);
+//        employee.employeeFileProcessing(employee.createEmployeeRecord(), empPath);
+//        payroll.payrollData(payPath, deptPath, empPath);
     }
 }

@@ -1,0 +1,6 @@
+ID No.	F. Name	L. Name	Dept. Code	Position	Hrs. Worked
+2203317	Jamari	Ferguson	2203	Project Manager	47.5
+2203789	Johnathon	White	2203	Lead Programmer	42.5
+2203590	Kimberly	Matthews	2203	Field Analyst	44.0
+9920665	Yanique	Palmer	9920	Human Resources Manager	40.0
+9920018	Abigail	Winter	9920	HR Assistant Manager	41.0

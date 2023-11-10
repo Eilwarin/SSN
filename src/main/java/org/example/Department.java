@@ -11,8 +11,8 @@ import java.util.Scanner;
 public class Department {
     protected String departmentCode;
     protected String departmentName;
-    protected float regularRate;
-    protected float overtimeRate;
+    protected double regularRate;
+    protected double overtimeRate;
 
     private Scanner input;
 
@@ -20,14 +20,14 @@ public class Department {
         input = new Scanner(System.in);
     }
 
-    public Department(String dpCode, String dpName, float regRate, float otRate) {
+    public Department(String dpCode, String dpName, double regRate, double otRate) {
         departmentCode = dpCode;
         departmentName = dpName;
         regularRate = regRate;
         overtimeRate = otRate;
     }
 
-    public List<Department> createRecord() {
+    public List<Department> createDepartmentRecord() {
         List<Department> newRecord = new ArrayList<>();
 
         System.out.println("Enter the details of the Department's record in the order of {Department Code, Department Name, Regular Pay Rate, Overtime Pay Rate}");
@@ -37,9 +37,9 @@ public class Department {
         System.out.print("\nEnter department name: ");
         setDepartmentName(input.nextLine());
         System.out.print("\nEnter the department's regular pay rate: ");
-        setRegularRate(input.nextFloat());
+        setRegularRate(input.nextDouble());
         System.out.print("\nEnter the department's overtime pay rate: ");
-        setOvertimeRate(input.nextFloat());
+        setOvertimeRate(input.nextDouble());
 
         Department departmentData = new Department(getDepartmentCode(), getDepartmentName(), getRegularRate(), getOvertimeRate());
         newRecord.add(departmentData);
@@ -48,7 +48,7 @@ public class Department {
     }
 
     public void updateRecord(Path path, Path outFile) throws IOException {
-        viewSingleRecord(path);
+        viewSingleDepartment(path);
 
         List<Department> updatedRecord = new ArrayList<>();
 
@@ -101,7 +101,7 @@ public class Department {
     }
 
 
-    public void viewSingleRecord(Path path){
+    public void viewSingleDepartment(Path path){
         try{
             if (Files.exists(path)) {
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
@@ -136,7 +136,7 @@ public class Department {
             }else {
                 System.out.print("\nThere are no available records. Would you like to create a new record? [y/n]: ");
                 if (input.nextLine().equals("y")){
-                    fileProcessing(createRecord(), path);
+                    departmentFileProcessing(createDepartmentRecord(), path);
                 }else {
                     throw new FileNotFoundException("The departments file does not exist.");
                 }
@@ -145,7 +145,7 @@ public class Department {
             System.out.println("An error has occurred. " + e);
         }
     }
-    public void viewAllRecords(Path path){
+    public void viewAllDepartments(Path path){
         try{
             if (Files.exists(path)){
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
@@ -177,7 +177,7 @@ public class Department {
             }else {
                 System.out.print("\nThere are no available records. Would you like to create a new record? [y/n]: ");
                 if (input.nextLine().equals("y")){
-                    fileProcessing(createRecord(), path);
+                    departmentFileProcessing(createDepartmentRecord(), path);
                 }else {
                     throw new FileNotFoundException("The departments file does not exist.");
                 }
@@ -187,7 +187,7 @@ public class Department {
             System.out.println("An error has occurred. " + e);
         }
     }
-    public void fileProcessing(List<Department> record, Path path){
+    public void departmentFileProcessing(List<Department> record, Path path){
         try {
             if (!Files.exists(path)) {
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile()));
@@ -234,19 +234,19 @@ public class Department {
         this.departmentName = departmentName;
     }
 
-    public float getRegularRate() {
+    public double getRegularRate() {
         return regularRate;
     }
 
-    public void setRegularRate(float regularRate) {
+    public void setRegularRate(double regularRate) {
         this.regularRate = regularRate;
     }
 
-    public float getOvertimeRate() {
+    public double getOvertimeRate() {
         return overtimeRate;
     }
 
-    public void setOvertimeRate(float overtimeRate) {
+    public void setOvertimeRate(double overtimeRate) {
         this.overtimeRate = overtimeRate;
     }
 
