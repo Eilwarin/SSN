@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Payroll extends Employee{
     private double regularPay;
@@ -14,8 +15,10 @@ public class Payroll extends Employee{
     private double grossPay;
     private LocalDate processedDate;
     private String chequeNumber;
+    private Scanner input;
 
     public Payroll(){
+        input = new Scanner(System.in);
     }
 
     public Payroll(LocalDate processedDate, String chqNo, String idNo, String fName, String lName, String deptCode, String position, double regPay, double otPay, double gross){
@@ -51,8 +54,7 @@ public class Payroll extends Employee{
 
         setChequeNumber(chequeNumber.toString());
 
-        Payroll pay = new Payroll(getProcessedDate(), getChequeNumber(), getIdNumber(), getFirstName(), getLastName(), getDepartmentCode(), getPosition(), getRegularPay(), getOvertimePay(), getGrossPay());
-        newPayroll.add(pay);
+        newPayroll.add(this);
 
         return newPayroll;
     }
@@ -117,6 +119,7 @@ public class Payroll extends Employee{
                     setIdNumber(employee.getIdNumber());
                     setFirstName(employee.getFirstName());
                     setLastName(employee.getLastName());
+                    setDepartmentCode(employee.getDepartmentCode());
                     setPosition(employee.getPosition());
                     setHoursWorked(employee.getHoursWorked());
                     setProcessedDate(LocalDate.now());
@@ -126,6 +129,100 @@ public class Payroll extends Employee{
 
             }else {
                 throw new FileNotFoundException("Operations could not be completed.");
+            }
+        }catch (IOException e){
+            System.out.println("An error has occurred. " + e);
+        }
+    }
+
+    public void viewEmployeePayroll(Path path){
+        try{
+            if (Files.exists(path)) {
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
+                List<Payroll> data = new ArrayList<>();
+                String line;
+                boolean headerSkipped = false;
+                System.out.print("Enter Employee ID Number: ");
+                String index = input.nextLine();
+                String[] payrollData;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (!headerSkipped){
+                        headerSkipped = true;
+                        continue;
+                    }
+                    payrollData = line.split("\t");
+
+                    if (payrollData.length == 11 && payrollData[2].equals(index)) {
+                        LocalDate processedDate = LocalDate.parse(payrollData[0]);
+                        String chequeNo = payrollData[1];
+                        String idNo = payrollData[2];
+                        String fName = payrollData[3];
+                        String lName = payrollData[4];
+                        String dpCode = payrollData[5];
+                        String position = payrollData[6];
+                        float hrsWorked = Float.parseFloat(payrollData[7]);
+                        double regPay = Double.parseDouble(payrollData[8]);
+                        double otPay = Double.parseDouble(payrollData[9]);
+                        double grossPay = Double.parseDouble(payrollData[10]);
+
+                        Payroll payroll = new Payroll(processedDate, chequeNo, idNo, fName, lName, dpCode, position, regPay, otPay, grossPay);
+                        data.add(payroll);
+                    }
+                }
+                for (Payroll payroll :
+                        data) {
+                    System.out.println(payroll);
+                }
+            }else {
+                throw new FileNotFoundException("The payroll file does not exist.");
+            }
+        }catch (IOException e){
+            System.out.println("An error has occurred. " + e);
+        }
+    }
+
+    public void viewDepartmentPayroll(Path path){
+        try{
+            if (Files.exists(path)) {
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
+                List<Payroll> data = new ArrayList<>();
+                String line;
+                boolean headerSkipped = false;
+                System.out.print("Enter Department Code: ");
+                String index = input.nextLine();
+                String[] payrollData;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (!headerSkipped){
+                        headerSkipped = true;
+                        continue;
+                    }
+                    payrollData = line.split("\t");
+
+                    if (payrollData.length == 11 && payrollData[5].equals(index)) {
+                        LocalDate processedDate = LocalDate.parse(payrollData[0]);
+                        String chequeNo = payrollData[1];
+                        String idNo = payrollData[2];
+                        String fName = payrollData[3];
+                        String lName = payrollData[4];
+                        String dpCode = payrollData[5];
+                        String position = payrollData[6];
+                        float hrsWorked = Float.parseFloat(payrollData[7]);
+                        double regPay = Double.parseDouble(payrollData[8]);
+                        double otPay = Double.parseDouble(payrollData[9]);
+                        double grossPay = Double.parseDouble(payrollData[10]);
+
+                        Payroll payroll = new Payroll(processedDate, chequeNo, idNo, fName, lName, dpCode, position, regPay, otPay, grossPay);
+                        data.add(payroll);
+                    }
+                }
+                for (Payroll payroll :
+                        data) {
+                    System.out.println("\n" + payroll);
+                }
+            }else {
+                throw new FileNotFoundException("The payroll file does not exist.");
             }
         }catch (IOException e){
             System.out.println("An error has occurred. " + e);
@@ -196,4 +293,12 @@ public class Payroll extends Employee{
     public void setChequeNumber(String chequeNumber) {
         this.chequeNumber = chequeNumber;
     }
+
+//    public String toString() {
+//        return "Date" + '\t' + "Cheque Number" + '\t' + "ID Number" + '\t' + "First Name" + '\t' +
+//                "Last Name" + '\t' + "Department Code" + '\t' + "Position" + '\t' +
+//                "Hours Worked" + '\t' + "Regular Pay" + '\t' + "Overtime Pay" + '\t' + "Gross Pay\n" + getIdNumber() + '\t' + getFirstName() + '\t' + getLastName() + '\t' + getDepartmentCode() +
+//                '\t' + getPosition() + '\t' + getHoursWorked() + '\t' + getRegularPay() + '\t' + getOvertimePay() + '\t'
+//                + getGrossPay();
+//    }
 }

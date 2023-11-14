@@ -14,9 +14,11 @@ public class Main {
         Path payPath = Paths.get("payroll.txt");
 
 //        department.viewSingleRecord(deptPath);
-//        employee.viewAllEmployees(empPath);
-        employee.viewSingleEmployee(empPath);
+        employee.viewAllEmployees(empPath);
+//        employee.viewSingleEmployee(empPath);
 //        employee.employeeFileProcessing(employee.createEmployeeRecord(), empPath);
 //        payroll.payrollData(payPath, deptPath, empPath);
+//        payroll.viewEmployeePayroll(payPath);
+//        payroll.viewDepartmentPayroll(payPath);
     }
 }

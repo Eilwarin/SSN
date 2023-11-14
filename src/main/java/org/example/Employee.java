@@ -52,6 +52,9 @@ public class Employee extends Department{
 
         return newRecord;
     }
+    public List<Employee> updateEmployeeRecord(){
+        return null;
+    }
 
     public void viewSingleEmployee(Path path){
         try{
@@ -109,6 +112,8 @@ public class Employee extends Department{
                 List<Employee> data = new ArrayList<>();
                 String line;
                 boolean headerSkipped = false;
+                System.out.print("Enter Department Code: ");
+                String index = input.nextLine();
 
                 while ((line = bufferedReader.readLine()) != null) {
                     if (!headerSkipped){
@@ -117,7 +122,7 @@ public class Employee extends Department{
                     }
                     String[] employeeData = line.split("\t");
 
-                    if (employeeData.length == 6) {
+                    if (employeeData.length == 6 && employeeData[3].equals(index)) {
                         String idNo = employeeData[0];
                         String fName = employeeData[1];
                         String lName = employeeData[2];
@@ -131,7 +136,7 @@ public class Employee extends Department{
                 }
                 for (Employee employee :
                         data) {
-                    System.out.println("\n" + employee);
+                    System.out.println("\n" + employee.toString(index));
                 }
             }else {
                 System.out.print("\nThere are no available records. Would you like to create a new record? [y/n]: ");
@@ -210,11 +215,10 @@ public class Employee extends Department{
     public void setHoursWorked(float hoursWorked) {
         this.hoursWorked = hoursWorked;
     }
-    @Override
-    public String toString() {
+    public String toString(String index) {
         return "ID Number" + '\t' + "First Name" + '\t' +
                 "Last Name" + '\t' + "Department Code" + '\t' + "Position" + '\t' +
-                "Hours Worked\n" + idNumber + '\t' + firstName + '\t' + lastName + '\t' + departmentCode +
+                "Hours Worked\n" + idNumber + '\t' + firstName + '\t' + lastName + '\t' + index +
                 '\t' + position + '\t' + hoursWorked;
     }
 }

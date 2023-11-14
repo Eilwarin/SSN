@@ -179,3 +179,63 @@ public void updateRecord(Path path, Path outFile) throws IOException {
     Files.copy(tempFile.toPath(), outFile, StandardCopyOption.REPLACE_EXISTING);
     tempFile.delete(); // Remove the temporary file
 }
+
+
+import java.util.Random;
+
+public class RandomStringGenerator {
+    public static void main(String[] args) {
+        int length = 10; // specify the length of the random string
+        String randomString = generateRandomString(length);
+        System.out.println("Random String: " + randomString);
+    }
+
+    private static String generateRandomString(int length) {
+        // ASCII values for printable characters (33 to 126)
+        int lowerBound = 33;
+        int upperBound = 126;
+
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int randomAscii = lowerBound + random.nextInt(upperBound - lowerBound + 1);
+            stringBuilder.append((char) randomAscii);
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public List<Payroll> calculatePay() {
+        List<Payroll> newPayroll = new ArrayList<>();
+        StringBuilder chequeNumber = new StringBuilder();
+        Random seed = new Random();
+        float overtime = 0;
+
+        if (getHoursWorked() > 40.0f) {
+            overtime = getHoursWorked() - 40.0f;
+        }
+        for (int ch = 0; ch < 4; ch++){
+            int asciiAlpha = 65 + seed.nextInt(90 - 65 + 1);
+            int asciiNumeric = 48 + seed.nextInt(57 - 48 + 1);
+
+            chequeNumber.append((char) asciiAlpha);
+            chequeNumber.append((char) asciiNumeric);
+        }
+
+        setRegularPay((getHoursWorked() - overtime) * getRegularRate());
+
+        setOvertimePay(overtime * getOvertimeRate());
+
+        setGrossPay(getRegularPay() + getOvertimePay());
+
+        setProcessedDate(LocalDate.now());
+        setChequeNumber(chequeNumber.toString());
+
+        // No need to create a new Payroll object, modify the current object
+        newPayroll.add(this);
+
+        return newPayroll;
+    }
+
+}
