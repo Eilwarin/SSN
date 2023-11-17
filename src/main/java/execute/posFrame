@@ -1,0 +1,12 @@
+Department Position
+
+Department Position Rates
+
+
+Pay rates differ from employee role to employee role and from department to department. A manager from one
+department will not necessarily be paid the same as a manager from another department.
+
+And so, the regular pay rate is assigned to the department's positions while the employee's position
+remains generalized (eg. Department Position - HR Manager, Employee Position - Manager). The program is
+aware that if an employee's position is "Manager" then they are Department "Manager" and are assigned the
+pay rate of the Department "Manager".

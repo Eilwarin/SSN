@@ -1,7 +1,0 @@
-Date	Cheque No.	ID No.	F. Name	L. Name	Dept. Code	Position	Hrs. Worked	Reg. Pay	OT. Pay	Gross Pay
-2023-11-10	P4H2G2B2	2203317	Jamari	Ferguson	null	Project Manager	47.5	32000.0	9000.0	41000.0
-2023-11-10	N9A5O8N1	2203789	Johnathon	White	null	Lead Programmer	42.5	32000.0	3000.0	35000.0
-2023-11-10	V8O1N8O8	2203590	Kimberly	Matthews	null	Field Analyst	44.0	32000.0	4800.0	36800.0
-2023-11-10	W8U2Y7T9	2203317	Jamari	Ferguson	null	Project Manager	47.5	32400.0	4500.0	36900.0
-2023-11-10	Z0R4F8J0	2203789	Johnathon	White	null	Lead Programmer	42.5	32400.0	1500.0	33900.0
-2023-11-10	I6H1K5W1	2203590	Kimberly	Matthews	null	Field Analyst	44.0	32400.0	2400.0	34800.0
