@@ -2,7 +2,7 @@ Employee ID Numbers are determined by the position that an Employee holds.
 The ID Number serves as both a way to identify an employee and a way to identify
 their position in the company.
 
-There are 49 positions within the company, ranging from normal employee to upper management.
+There are 43 positions within the company, ranging from normal employee to upper management.
 Externally contracted entities are not considered.
 
 Upper Management
@@ -21,35 +21,7 @@ Upper Management
     Chief Customer Officer (CCO) - 4300/114
     Chief Strategy Officer (CSO) - 4300/113
     Chief Communications Officer (CCO) - 4300/109
-    Software Developer/Engineer - 2203/3(15 - 84) | 2203/4(00 - 79)
-    Quality Assurance (QA) Engineer/Tester - 1378/3(15 - 99)
-    Systems Analyst - 2203/3(85 - 99) | 2203/4(80 - 89)
-    UI/UX Designer - 4403/3(15 - 99)
-    Business Analyst - 4318/3(15 - 99)
-    Technical Support Engineer - 9920/3(15 - 58)
-    IT Support Specialist - 9920/3(59 - 99)
-    Security Analyst - 4361/3(15 - 99)
-    Data Scientist/Analyst - 8277/3(15 - 99)
-    Content Developer/Technical Writer - 2203/4(90 - 99)
-    Sales Engineer - 8800/3(15 - 99)
-    Customer Support Representative - 4328/3(15 - 99)
-    Human Resources Specialist - 4345/3(15 - 99)
-    Finance Analyst - 4360/3(15 - 99)
-    Team Lead/Lead Developer - 2203/200
-    Project Manager - 8500/201
-    Product Manager - 8500/202
-    Development Manager - 2203/204
-    Quality Assurance (QA) Manager - 1378/203
-    Release Manager - 2203/206
-    Technical Lead - 9920/205
-    Business Analyst Manager - 4318/212
-    UX/UI Manager - 4403/207
-    Infrastructure Manager - 9920/208
-    Customer Support Manager - 4328/211
-    Data Manager - 8277/209
-    Training and Development Manager - 8500/210
-    Database Administrator - 8277/214
-    Network Administrator - 9920/213
+
 
 Middle Management
 
@@ -73,14 +45,14 @@ Employee
 
     Software Developer/Engineer - 2203/3(15 - 84) | 2203/4(00 - 79)
     Quality Assurance (QA) Engineer/Tester - 1378/3(15 - 99)
-    Systems Analyst - 2203/3(85 - 99) | 2203/4(80 - 99)
+    Systems Analyst - 2203/3(85 - 99) | 2203/4(80 - 89)
     UI/UX Designer - 4403/3(15 - 99)
     Business Analyst - 4318/3(15 - 99)
     Technical Support Engineer - 9920/3(15 - 58)
     IT Support Specialist - 9920/3(59 - 99)
     Security Analyst - 4361/3(15 - 99)
     Data Scientist/Analyst - 8277/3(15 - 99)
-    Content Developer/Technical Writer -
+    Content Developer/Technical Writer - 2203/4
     Sales Engineer - 8800/3(15 - 99)
     Customer Support Representative - 4328/3(15 - 99)
     Human Resources Specialist - 4345/3(15 - 99)
