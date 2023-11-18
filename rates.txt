@@ -1,6 +1,0 @@
-Dept. Code	Dept. Position	Reg. Rate	OT. Rate
-2203	HR Manager	1200.0	600.0
-2203	HR Assistant	790.0	395.0
-9920	Chief Engineer	1300.0	650.0
-8290	Housekeeping Manager	1000.0	500.0
-7389	Training Manager	800.0	400.0

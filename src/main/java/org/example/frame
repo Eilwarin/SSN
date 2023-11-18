@@ -34,7 +34,7 @@ Error Checks
 
 : Employee
     - User enters a Department Code that does not exist in the Departments file.
-    - User enters an ID Number that is less than greater than 7 characters.
+    - User enters an ID Number that is less than or greater than 7 characters.
     - User enters an ID Number that contains non-numeric values.
     - User enters a Department Code that is not the leading 4 characters of their ID Number.
     - User enters a First Name, Last Name or Position that contains non-alphabetic values.

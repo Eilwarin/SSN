@@ -1,6 +1,14 @@
-Dept. Code	Dept. Name	Dept. Position	Hourly Rate	Overtime Rate
-2203	Human Resources	HR Manager	1200.0	600.0
-2203	Human Resources	HR Assistant	790.0	395.0
-9920	Maintenance	Chief Engineer	1300.0	650.0
-8290	Housekeeping	Housekeeping Manager	1000.0	500.0
-7389	Training	Training Manager	800.0	400.0
+Dept. Code	Dept. Name
+4300	Executive
+2203	Software Engineering
+1378	Quality Assurance
+8277	Data Analytics
+4361	Security Operations
+4360	Accounting
+9920	IT & Network Administration
+8800	Sales
+4403	Design
+8500	Project Management
+4328	Customer Service
+4345	Human Resources
+4318	Business Development

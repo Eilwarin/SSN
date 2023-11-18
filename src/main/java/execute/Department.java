@@ -33,71 +33,11 @@ public class Department extends PositionRates{
         setDepartmentCode(input.nextLine());
         System.out.print("\nEnter Department name: ");
         setDepartmentName(input.nextLine());
-        System.out.print("\nEnter Department position: ");
-        setDepartmentPosition(input.nextLine());
-        System.out.print("\nEnter the Position's hourly pay rate: ");
-        setPositionRegRate(input.nextDouble());
-        setPositionOtRate(getPositionRegRate() * .5);
 
         newRecord.add(this);
 
         return newRecord;
     }
-
-//    public void updateRecord(Path path, Path outFile) throws IOException {
-//        viewSingleDepartment(path);
-//
-//        List<Department> updatedRecord = new ArrayList<>();
-//
-//        System.out.println("Enter the new details of the Department's record in the order of {Department Code, Department Name, Regular Pay Rate, Overtime Pay Rate}");
-//
-//        System.out.print("\nEnter department code: ");
-//        setDepartmentCode(input.nextLine());
-//        System.out.print("\nEnter department name: ");
-//        setDepartmentName(input.nextLine());
-//        System.out.print("\nEnter the department's regular pay rate: ");
-//        setRegularRate(input.nextFloat());
-//        System.out.print("\nEnter the department's overtime pay rate: ");
-//        setOvertimeRate(input.nextFloat());
-//
-//        Department departmentData = new Department(getDepartmentCode(), getDepartmentName(), getRegularRate(), getOvertimeRate());
-//        updatedRecord.add(departmentData);
-//
-//        File copyFile = new File(outFile.toString());
-//        BufferedWriter copyWriter = new BufferedWriter(new FileWriter(outFile.toFile()));
-//        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
-//             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(outFile.toFile(), true))) {
-//
-//            String line;
-//            boolean headerSkipped = false;
-//
-//            while ((line = bufferedReader.readLine()) != null) {
-//                if (!headerSkipped) {
-//                    bufferedWriter.write(line + System.lineSeparator());
-//                    headerSkipped = true;
-//                    continue;
-//                }
-//
-//                String[] fileContent = line.split("\t");
-//
-//                if (fileContent.length >= 1 && fileContent[0].equals(getDepartmentCode())) {
-//                    continue;
-//                }
-//                bufferedWriter.write(line + System.lineSeparator());
-//            }
-//
-//            for (Department department : updatedRecord){
-//
-//                bufferedWriter.write(department.getDepartmentCode() + "\t" + department.getDepartmentName() + "\t"
-//                        + department.getRegularRate() + "\t" + department.getOvertimeRate());
-//                bufferedWriter.newLine();
-//            }
-//        } catch (IOException e) {
-//            System.out.println("An error occurred.\n" + e);
-//        }
-//    }
-//
-//
     public void viewSingleDepartment(Path path){
         try{
             if (Files.exists(path)) {
@@ -194,7 +134,7 @@ public class Department extends PositionRates{
             if (!Files.exists(path)) {
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile()));
 
-                bufferedWriter.write("Dept. Code\tDept. Name\tDept. Position\tHourly Rate\tOvertime Rate");
+                bufferedWriter.write("Dept. Code\tDept. Name");
                 bufferedWriter.newLine();
                 bufferedWriter.close();
             }
@@ -202,13 +142,12 @@ public class Department extends PositionRates{
 
             for (Department departmentData : record){
 
-                bufferedWriter.write(departmentData.getDepartmentCode() + "\t" + departmentData.getDepartmentName() + "\t"
-                        + departmentData.getDepartmentPosition() + "\t" + departmentData.getPositionRegRate() + "\t" + departmentData.getPositionOtRate());
+                bufferedWriter.write(departmentData.getDepartmentCode() + "\t" + departmentData.getDepartmentName());
                 bufferedWriter.newLine();
                 setDepartmentCode(departmentData.getDepartmentCode());
             }
             bufferedWriter.close();
-            fileProcessing(Path.of("rates.txt"));
+//            fileProcessing(Path.of("rates.txt"));
         }catch (IOException e){
             System.out.println("An error occurred " + e);
         }
