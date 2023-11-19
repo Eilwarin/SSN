@@ -1,0 +1,164 @@
+-   CLASSES -
+
+EMPLOYEES
+EMPLOYEES TAX
+DEPARTMENTS
+PROCESSED PAYROLL
+POSITIONS
+POSITIONS PAY RATES
+
+
+-   ATTRIBUTES  -
+
+EMPLOYEES
+    - ID Number (owned, String)
+    - First Name (owned, String)
+    - Last Name (owned, String)
+    - Department Code (inherited, String)
+    - Job/Position (inherited, String)
+
+EMPLOYEES TAX
+    - ID Number (inherited, String)
+    - TRN (owned, String)
+    - NIS (owned, String)
+    - Income Tax Rate (owned, final double)
+    - NIS Tax Rate (owned, final double)
+    - Education Tax Rate (owned, final double)
+    - Income Tax Threshold (owned, final double)
+    - Taxable Income (owned, double)
+    - Income Taxable (owned, boolean)
+    - Paid Income Tax (owned, double)
+    - Paid NIS Tax (owned, double)
+    - Paid Education Tax (owned, double)
+
+DEPARTMENTS
+    - Department Code (owned, String)
+    - Department Name (owned, String)
+
+POSITIONS
+    - Job/Position (owned, String)
+    - ID Number/Position ID (owned, String)
+
+POSITIONS PAY RATES
+    - Department Code (inherited, String)
+    - Department Name (inherited, String)
+    - Job/Position ID (inherited, String)
+    - Job/Position (inherited, String)
+    - Regular Pay Rate (owned, double)
+    - Overtime Pay Rate (owned, double)
+
+PROCESSED PAYROLL
+    - Date of Generation
+    - Unique Cheque Number
+    - ID Number
+    - First Name
+    - Last Name
+    - Department Code
+    - Department Name
+    - Job/Position
+    - TRN
+    - NIS
+    - Hours Worked
+    - Regular Pay
+    - Overtime Pay
+    - Gross Pay
+    - Net Pay
+    - Income Tax
+    - NIS Tax
+    - Education Tax
+
+
+-   METHODS   -
+
+EMPLOYEES
+    - Create a new record (Implemented)
+    - Update an existing record (Implemented)
+    - View a single existing record
+    - View all existing records by department
+    - Create file to store records
+    - Validate by search in existing file for newly created record
+    - Access and assign the corresponding value of the Department Name from the Department Code
+
+EMPLOYEES TAX
+    - Create a new record (Implemented)
+    - Update an existing record
+    - View a single existing record
+    - View all existing records by department
+    - Create file to store records
+    - Validate by search in existing file for newly created record
+
+DEPARTMENTS
+    - Create a new record (Implemented)
+    - Update an existing record
+    - View a single existing record (Implemented)
+    - View all existing records (Implemented)
+    - Create file to store records (Implemented)
+    - Validate by search in existing file for newly created record
+
+POSITIONS
+    - Create file to store records
+    - Validate by search in existing file for newly created record
+
+POSITIONS RATES
+    - Create a new record
+    - Update an existing record
+    - View a single existing record
+    - View all existing records by department
+    - Create file to store records
+    - Validate by search in existing file for newly created record
+    - Access and assign the corresponding value of the Department Name and Department Code
+    - Access and assign the corresponding value of the Position Name and Position ID
+
+
+-   FILES   -
+
+EMPLOYEES
+    - ID Number
+    - First Name
+    - Last Name
+    - Department Name
+    - Job/Position
+
+EMPLOYEES TAX
+    - ID Number
+    - TRN
+    - NIS
+    - Income Taxable (Boolean)
+    - Income Tax Paid
+    - NIS Tax Paid
+    - Education Tax Paid
+
+DEPARTMENTS
+    - Department Code
+    - Department Name
+
+POSITIONS
+    - ID Number
+    - Job/Position
+
+POSITIONS PAY RATES
+    - Department Code
+    - Department Name
+    - ID Number
+    - Job/Position
+    - Regular Pay Rate
+    - Overtime Pay rate
+
+PROCESSED PAYROLL
+    - Date of Generation
+    - Unique Cheque Number
+    - ID Number
+    - First Name
+    - Last Name
+    - Department Code
+    - Department Name
+    - Position
+    - Pre-tax Pay
+    - Overtime Pay
+    - Gross Pay
+    - Net Pay
+    - TRN
+    - NIS
+    - Income Tax
+    - NIS Tax
+    - Education Tax
