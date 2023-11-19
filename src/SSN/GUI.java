@@ -24,7 +24,7 @@ public class GUI extends JFrame {
         createDepartmentButtons();
 
         add(buttonPanel, BorderLayout.NORTH);
-        add(contentPanel, BorderLayout.CENTER);
+        add(new JScrollPane(contentPanel), BorderLayout.CENTER);
 
         // Set frame properties
         pack();
@@ -60,16 +60,32 @@ public class GUI extends JFrame {
 
         // Add action listeners to department buttons
 //        addRecordButton.addActionListener(e -> showDepartmentView("Add new record"));
-        updateRecordButton.addActionListener(e -> showDepartmentView(false));
-        viewSingleRecordButton.addActionListener(e -> showDepartmentView(false));
-        viewAllRecordsButton.addActionListener(e -> showDepartmentView(true));
+        updateRecordButton.addActionListener(e -> showDepartmentView());
+        viewSingleRecordButton.addActionListener(e -> showDepartmentView());
+        viewAllRecordsButton.addActionListener(e -> showAllDepartments());
     }
 
-    private void showDepartmentView(boolean isIncrement) {
+    private void showAllDepartments(){
+        Path path = Path.of("departments.txt");
+        String[] departments = department.viewAllDepartments(path).toArray(new String[0]);
+
+        contentPanel.removeAll();
+        contentPanel.revalidate();
+        contentPanel.repaint();
+        addHeaderRowCentered();
+        for (int grid = 0; grid <
+                departments.length; grid++){
+            department.setDepartmentCode(departments[grid]);
+            department.viewSingleDepartment(path);
+            addLabelsBasedOnOptionCentered(true, grid);
+        }
+    }
+    private void showDepartmentView() {
         // Clear existing components from contentPanel
         contentPanel.removeAll();
         contentPanel.revalidate();
         contentPanel.repaint();
+        Path path = Path.of("departments.txt");
 
         // Create and add label for department selection
         JLabel selectLabel = new JLabel("Select a department from the drop-down list.");
@@ -80,7 +96,7 @@ public class GUI extends JFrame {
         contentPanel.add(selectLabel, selectLabelConstraints);
 
         // Create and add department dropdown
-        departmentDropdown = new JComboBox<>(department.viewAllDepartments(Path.of("departments.txt")).toArray(new String[0]));
+        departmentDropdown = new JComboBox<>(department.viewAllDepartments(path).toArray(new String[0]));
         GridBagConstraints dropdownConstraints = new GridBagConstraints();
         dropdownConstraints.gridx = 0;
         dropdownConstraints.gridy = 1;
@@ -88,22 +104,19 @@ public class GUI extends JFrame {
         contentPanel.add(departmentDropdown, dropdownConstraints);
 
         // Add action listener to department dropdown
-        departmentDropdown.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Clear existing components from contentPanel
-                contentPanel.removeAll();
-                contentPanel.revalidate();
-                contentPanel.repaint();
+        departmentDropdown.addActionListener(e -> {
+            // Clear existing components from contentPanel
+            contentPanel.removeAll();
+            contentPanel.revalidate();
+            contentPanel.repaint();
 
-                // Add header labels centered
-                addHeaderRowCentered();
-                department.setDepartmentCode(Objects.requireNonNull(departmentDropdown.getSelectedItem()).toString());
-                department.viewSingleDepartment(Path.of("departments.txt"));
+            // Add header labels centered
+            addHeaderRowCentered();
+            department.setDepartmentCode(Objects.requireNonNull(departmentDropdown.getSelectedItem()).toString());
+            department.viewSingleDepartment(path);
 
-                // Dynamically create and add centered labels based on selected option
-                addLabelsBasedOnOptionCentered(isIncrement);
-            }
+            // Dynamically create and add centered labels based on selected option
+            addLabelsBasedOnOptionCentered(false, 0);
         });
 
         // Refresh the UI
@@ -127,37 +140,25 @@ public class GUI extends JFrame {
         headerConstraints.gridx = 1;
         contentPanel.add(departmentNameLabel, headerConstraints);
     }
-
-    private void addLabelsBasedOnOptionCentered(boolean isIncrement) {
-        int gridx = 0;
+    private void addLabelsBasedOnOptionCentered(boolean isViewAll, int grid) {
         GridBagConstraints labelConstraints = new GridBagConstraints();
 
-        if (isIncrement){
-            for (String ignored :
-                    department.viewAllDepartments(Path.of("departments.txt")).toArray(new String[0])) {
+        if (isViewAll){
+            labelConstraints.gridx = grid;
+            labelConstraints.gridy = grid + 1;
+            labelConstraints.insets = new Insets(10, 10, 10, 10);
+            labelConstraints.anchor = GridBagConstraints.CENTER;
 
-                labelConstraints.gridx = gridx;
-                labelConstraints.gridy = 1;
-                labelConstraints.insets = new Insets(10, 10, 10, 10);
-                labelConstraints.anchor = GridBagConstraints.CENTER;
+            // Create and add centered labels dynamically
+            JLabel departmentCodeLabel = new JLabel(department.getDepartmentCode());
+            JLabel departmentNameLabel = new JLabel(department.getDepartmentName());
 
-                // Create and add centered labels dynamically
-                JLabel departmentCodeLabel = new JLabel(department.getDepartmentCode());
-                JLabel departmentNameLabel = new JLabel(department.getDepartmentName());
-
-                // Add labels to contentPanel
-                contentPanel.add(departmentCodeLabel, labelConstraints);
-                labelConstraints.gridx = gridx+1;
-                contentPanel.add(departmentNameLabel, labelConstraints);
-
-                // Refresh the UI
-                contentPanel.revalidate();
-                contentPanel.repaint();
-
-                gridx++;
-            }
+            // Add labels to contentPanel
+            contentPanel.add(departmentCodeLabel, labelConstraints);
+            labelConstraints.gridx = grid + 1;
+            contentPanel.add(departmentNameLabel, labelConstraints);
         }else {
-            labelConstraints.gridx = gridx;
+            labelConstraints.gridx = 0;
             labelConstraints.gridy = 1;
             labelConstraints.insets = new Insets(10, 10, 10, 10);
             labelConstraints.anchor = GridBagConstraints.CENTER;
@@ -168,13 +169,12 @@ public class GUI extends JFrame {
 
             // Add labels to contentPanel
             contentPanel.add(departmentCodeLabel, labelConstraints);
-            labelConstraints.gridx = gridx+1;
+            labelConstraints.gridx = 1;
             contentPanel.add(departmentNameLabel, labelConstraints);
-
-            // Refresh the UI
-            contentPanel.revalidate();
-            contentPanel.repaint();
         }
+        // Refresh the UI
+        contentPanel.revalidate();
+        contentPanel.repaint();
 
 
     }
