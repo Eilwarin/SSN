@@ -59,26 +59,34 @@ public class GUI extends JFrame {
         buttonPanel.add(viewAllRecordsButton, gbc);
 
         // Add action listeners to department buttons
-//        addRecordButton.addActionListener(e -> showDepartmentView("Add new record"));
+        addRecordButton.addActionListener(e -> showDepartmentView());
         updateRecordButton.addActionListener(e -> showDepartmentView());
         viewSingleRecordButton.addActionListener(e -> showDepartmentView());
         viewAllRecordsButton.addActionListener(e -> showAllDepartments());
     }
 
-    private void showAllDepartments(){
+    private void updateDepartment(){
+
+    }
+    private void showAllDepartments() {
         Path path = Path.of("departments.txt");
-        String[] departments = department.viewAllDepartments(path).toArray(new String[0]);
+        java.util.List<String> departments = department.viewAllDepartments(path);
 
         contentPanel.removeAll();
         contentPanel.revalidate();
         contentPanel.repaint();
+
         addHeaderRowCentered();
-        for (int grid = 0; grid <
-                departments.length; grid++){
-            department.setDepartmentCode(departments[grid]);
+
+        for (int grid = 0; grid < departments.size(); grid++) {
+            department.setDepartmentCode(departments.get(grid));
             department.viewSingleDepartment(path);
             addLabelsBasedOnOptionCentered(true, grid);
         }
+
+        // Refresh the UI
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
     private void showDepartmentView() {
         // Clear existing components from contentPanel
@@ -142,43 +150,25 @@ public class GUI extends JFrame {
     }
     private void addLabelsBasedOnOptionCentered(boolean isViewAll, int grid) {
         GridBagConstraints labelConstraints = new GridBagConstraints();
+        labelConstraints.gridx = 0;
+        labelConstraints.gridy = grid * 2 + 1; // Increase y-coordinate for each set
+        labelConstraints.insets = new Insets(10, 10, 10, 10);
+        labelConstraints.anchor = GridBagConstraints.CENTER;
 
-        if (isViewAll){
-            labelConstraints.gridx = grid;
-            labelConstraints.gridy = grid + 1;
-            labelConstraints.insets = new Insets(10, 10, 10, 10);
-            labelConstraints.anchor = GridBagConstraints.CENTER;
+        // Determine label values based on set index (replace with your logic)
+        String departmentCodeValue = department.getDepartmentCode();
+        String departmentNameValue = department.getDepartmentName();
 
-            // Create and add centered labels dynamically
-            JLabel departmentCodeLabel = new JLabel(department.getDepartmentCode());
-            JLabel departmentNameLabel = new JLabel(department.getDepartmentName());
+        // Create and add centered labels dynamically
+        JLabel departmentCodeLabel = new JLabel(departmentCodeValue);
+        JLabel departmentNameLabel = new JLabel(departmentNameValue);
 
-            // Add labels to contentPanel
-            contentPanel.add(departmentCodeLabel, labelConstraints);
-            labelConstraints.gridx = grid + 1;
-            contentPanel.add(departmentNameLabel, labelConstraints);
-        }else {
-            labelConstraints.gridx = 0;
-            labelConstraints.gridy = 1;
-            labelConstraints.insets = new Insets(10, 10, 10, 10);
-            labelConstraints.anchor = GridBagConstraints.CENTER;
-
-            // Create and add centered labels dynamically
-            JLabel departmentCodeLabel = new JLabel(department.getDepartmentCode());
-            JLabel departmentNameLabel = new JLabel(department.getDepartmentName());
-
-            // Add labels to contentPanel
-            contentPanel.add(departmentCodeLabel, labelConstraints);
-            labelConstraints.gridx = 1;
-            contentPanel.add(departmentNameLabel, labelConstraints);
-        }
-        // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
-
-
+        // Add labels to contentPanel
+        contentPanel.add(departmentCodeLabel, labelConstraints);
+        labelConstraints.gridx = 1;
+        labelConstraints.gridy = grid * 2 + 1; // Increase y-coordinate for each set
+        contentPanel.add(departmentNameLabel, labelConstraints);
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GUI::new);
     }
