@@ -20,6 +20,7 @@ public class PayrollGUI extends JFrame {
         contentPanel = new JPanel(new GridBagLayout());
 
         createPayrollButtons();
+        addBackButton();
 
         add(buttonPanel, BorderLayout.NORTH);
         add(new JScrollPane(contentPanel), BorderLayout.CENTER);
@@ -31,7 +32,7 @@ public class PayrollGUI extends JFrame {
         setVisible(true);
     }
 
-    private void createPayrollButtons() {
+    public void createPayrollButtons() {
         // Create department buttons
         JButton processPayrollButton = new JButton("Process Payroll");
         JButton viewEmployeePayrollButton = new JButton("View Employee Payroll");
@@ -57,19 +58,36 @@ public class PayrollGUI extends JFrame {
         viewEmployeePayrollButton.addActionListener(e -> viewEmployeePayroll());
         viewDepartmentPayrollButton.addActionListener(e -> viewDepartmentPayroll());
     }
+    private void addBackButton() {
+        JButton backButton = new JButton("Back to Menu");
+        GridBagConstraints backButtonConstraints = new GridBagConstraints();
+        backButtonConstraints.gridx = 2;
+        backButtonConstraints.gridy = 1; // Adjust the y-coordinate based on your layout
+        backButtonConstraints.insets = new Insets(10, 10, 10, 10);
+        backButtonConstraints.anchor = GridBagConstraints.CENTER;
 
-    private void clearContent(){
+        backButton.addActionListener(e -> {
+            // Close the current window
+            dispose();
+
+            // Invoke the main GUI
+            SwingUtilities.invokeLater(Main::new);
+        });
+
+        buttonPanel.add(backButton, backButtonConstraints);
+    }
+    public void clearContent(){
         // Clear existing components from contentPanel
         contentPanel.removeAll();
         contentPanel.revalidate();
         contentPanel.repaint();
     }
-    private void refreshUi(){
+    public void refreshUi(){
         // Refresh the UI
         contentPanel.revalidate();
         contentPanel.repaint();
     }
-    private void departmentDropdown(){
+    public void departmentDropdown(){
         // Create and add label for Department selection
         JLabel selectLabel = new JLabel("Select a Department Code from the drop-down list.");
         GridBagConstraints selectLabelConstraints = new GridBagConstraints();
@@ -86,7 +104,7 @@ public class PayrollGUI extends JFrame {
         dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
         contentPanel.add(payrollDropdown, dropdownConstraints);
     }
-    private void employeeDropdown(boolean gather){
+    public void employeeDropdown(boolean gather){
         // Create and add label for Employee selection
         JLabel selectLabel = new JLabel("Select an Employee ID from the drop-down list.");
         GridBagConstraints selectLabelConstraints = new GridBagConstraints();
@@ -106,7 +124,7 @@ public class PayrollGUI extends JFrame {
         refreshUi();
     }
 
-    private void successMessage(){
+    public void successMessage(){
         JLabel removeMessage = new JLabel("Operation successfully completed.");
         GridBagConstraints messageConstraints = new GridBagConstraints();
         messageConstraints.gridx = 0;
@@ -116,7 +134,7 @@ public class PayrollGUI extends JFrame {
 
         refreshUi();
     }
-    private void failureMessage(String reason){
+    public void failureMessage(String reason){
         clearContent();
         JLabel removeMessage = new JLabel("Operation could not be completed. " + "(" + reason + ")");
         GridBagConstraints messageConstraints = new GridBagConstraints();
@@ -127,7 +145,7 @@ public class PayrollGUI extends JFrame {
 
         refreshUi();
     }
-    private void processPayroll(){
+    public void processPayroll(){
         clearContent();
 
         departmentDropdown();
@@ -142,7 +160,7 @@ public class PayrollGUI extends JFrame {
             });
         });
     }
-    private void calculatePay(){
+    public void calculatePay(){
         clearContent();
 
         GridBagConstraints textFieldConstraints = new GridBagConstraints();
@@ -185,7 +203,7 @@ public class PayrollGUI extends JFrame {
         // Refresh the UI
         refreshUi();
     }
-    private void viewEmployeePayroll(){
+    public void viewEmployeePayroll(){
         clearContent();
 
         employeeDropdown(true);
@@ -202,7 +220,7 @@ public class PayrollGUI extends JFrame {
 
         });
     }
-    private void viewDepartmentPayroll(){
+    public void viewDepartmentPayroll(){
         clearContent();
         departmentDropdown();
 
@@ -229,7 +247,7 @@ public class PayrollGUI extends JFrame {
         });
     }
 
-    private void addHeaderRowCentered() {
+    public void addHeaderRowCentered() {
         clearContent();
 
         GridBagConstraints headerConstraints = new GridBagConstraints();
@@ -287,7 +305,7 @@ public class PayrollGUI extends JFrame {
         headerConstraints.gridx = 14;
         contentPanel.add(eduTaxLabel, headerConstraints);
     }
-    private void addLabelsBasedOnOptionCentered(int grid) {
+    public void addLabelsBasedOnOptionCentered(int grid) {
         GridBagConstraints labelConstraints = new GridBagConstraints();
         labelConstraints.gridx = 0;
         labelConstraints.gridy = grid * 2 + 1; // Increase y-coordinate for each set

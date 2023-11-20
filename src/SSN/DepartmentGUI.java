@@ -21,6 +21,7 @@ public class DepartmentGUI extends JFrame {
         contentPanel = new JPanel(new GridBagLayout());
 
         createDepartmentButtons();
+        addBackButton();
 
         add(buttonPanel, BorderLayout.NORTH);
         add(new JScrollPane(contentPanel), BorderLayout.CENTER);
@@ -64,19 +65,58 @@ public class DepartmentGUI extends JFrame {
         viewSingleRecordButton.addActionListener(e -> showDepartment());
         viewAllRecordsButton.addActionListener(e -> showAllDepartments());
     }
+    private void addBackButton() {
+        JButton backButton = new JButton("Back to Menu");
+        GridBagConstraints backButtonConstraints = new GridBagConstraints();
+        backButtonConstraints.gridx = 2;
+        backButtonConstraints.gridy = 1; // Adjust the y-coordinate based on your layout
+        backButtonConstraints.gridwidth = 2; // Span two columns
+        backButtonConstraints.insets = new Insets(10, 10, 10, 10);
+        backButtonConstraints.anchor = GridBagConstraints.CENTER;
 
-    private void clearContent(){
+        backButton.addActionListener(e -> {
+            // Close the current window
+            dispose();
+
+            // Invoke the main GUI
+            SwingUtilities.invokeLater(Main::new);
+        });
+
+        buttonPanel.add(backButton, backButtonConstraints);
+    }
+    private void clearContent() {
         // Clear existing components from contentPanel
         contentPanel.removeAll();
         contentPanel.revalidate();
         contentPanel.repaint();
     }
-    private void refreshUi(){
+    private void refreshUi() {
         // Refresh the UI
         contentPanel.revalidate();
         contentPanel.repaint();
     }
-    private void registerDepartment(){
+
+    private boolean validCode(String dpCode){
+        try{
+            Double.parseDouble(dpCode);
+            return true;
+        }catch (NumberFormatException ignored){
+            return false;
+        }
+    }
+
+    private boolean validName(String dpName){
+        for (int i = 0; i < dpName.length(); i++) {
+            char ch = dpName.charAt(i);
+            // Check if the character is not an alphanumeric character
+            if (!(Character.isLetterOrDigit(ch))) {
+                return false; // Found a non-alphanumeric character
+            }
+        }
+        return true; // No non-alphanumeric characters found
+    }
+
+    private void registerDepartment() {
         // Clear existing components from contentPanel
         clearContent();
 
@@ -89,6 +129,9 @@ public class DepartmentGUI extends JFrame {
         // Create and add text fields dynamically
         JTextField departmentCodeTextField = new JTextField(department.getDepartmentCode(), 15);
         JTextField departmentNameTextField = new JTextField(department.getDepartmentName(), 15);
+
+        departmentCodeTextField.setText(null);
+        departmentNameTextField.setText(null);
 
         // Create and add labels for text fields
         JLabel departmentCodeLabel = new JLabel("Department Code:");
@@ -115,14 +158,27 @@ public class DepartmentGUI extends JFrame {
 
         submitButton.addActionListener(e -> {
             // Retrieve values from text fields
-            department.setDepartmentCode(departmentCodeTextField.getText());
-            department.setDepartmentName(departmentNameTextField.getText());
+            if (validCode(departmentCodeTextField.getText()) && departmentCodeTextField.getText().length() == 4){
+                department.setDepartmentCode(departmentCodeTextField.getText());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid Department Code\n(Must be numeric and 4 characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerDepartment();
+            }
+
+            if (validName(departmentNameTextField.getText())){
+                department.setDepartmentName(departmentNameTextField.getText());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid ID Number\n(Must be alphanumeric. Cannot contain special characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerDepartment();
+            }
+
             department.departmentFileProcessing(department.createDepartmentRecord(), path, department.registeredDepartment(path));
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI
         refreshUi();
     }
+
     private void updateDepartment() {
         // Clear existing components from contentPanel
         clearContent();
@@ -159,6 +215,7 @@ public class DepartmentGUI extends JFrame {
         // Refresh the UI
         refreshUi();
     }
+
     private void addTextFieldsForUpdate() {
         // Clear existing components from contentPanel
         clearContent();
@@ -207,6 +264,7 @@ public class DepartmentGUI extends JFrame {
         // Refresh the UI
         refreshUi();
     }
+
     private void showAllDepartments() {
         java.util.List<String> departments = department.viewAllDepartments(path);
 
@@ -223,6 +281,7 @@ public class DepartmentGUI extends JFrame {
         // Refresh the UI
         refreshUi();
     }
+
     private void showDepartment() {
         // Clear existing components from contentPanel
         clearContent();
@@ -277,6 +336,7 @@ public class DepartmentGUI extends JFrame {
         headerConstraints.gridx = 1;
         contentPanel.add(departmentNameLabel, headerConstraints);
     }
+
     private void addLabelsBasedOnOptionCentered(int grid) {
         GridBagConstraints labelConstraints = new GridBagConstraints();
         labelConstraints.gridx = 0;
@@ -300,6 +360,7 @@ public class DepartmentGUI extends JFrame {
 
         refreshUi();
     }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(DepartmentGUI::new);
     }

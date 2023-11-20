@@ -21,6 +21,7 @@ public class EmployeeGUI extends JFrame {
         contentPanel = new JPanel(new GridBagLayout());
 
         createEmployeeButtons();
+        addBackButton();
 
         add(buttonPanel, BorderLayout.NORTH);
         add(new JScrollPane(contentPanel), BorderLayout.CENTER);
@@ -69,7 +70,24 @@ public class EmployeeGUI extends JFrame {
         viewAllRecordsButton.addActionListener(e -> showDepartmentEmployees());
         removeRecordButton.addActionListener(e -> removeEmployee());
     }
+    private void addBackButton() {
+        JButton backButton = new JButton("Back to Menu");
+        GridBagConstraints backButtonConstraints = new GridBagConstraints();
+        backButtonConstraints.gridx = 3;
+        backButtonConstraints.gridy = 1; // Adjust the y-coordinate based on your layout
+        backButtonConstraints.insets = new Insets(10, 10, 10, 10);
+        backButtonConstraints.anchor = GridBagConstraints.CENTER;
 
+        backButton.addActionListener(e -> {
+            // Close the current window
+            dispose();
+
+            // Invoke the main GUI
+            SwingUtilities.invokeLater(Main::new);
+        });
+
+        buttonPanel.add(backButton, backButtonConstraints);
+    }
     private void clearContent(){
         // Clear existing components from contentPanel
         contentPanel.removeAll();

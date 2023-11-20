@@ -15,8 +15,9 @@ public class PositionRates extends Employee{
     public PositionRates(){
     }
 
-    public void viewSingleRates(Path path, boolean updateQuery){
+    public boolean viewSingleRates(Path path, boolean updateQuery){
         StringBuilder unedited = new StringBuilder();
+        boolean recordExists = false;
         try{
             if (Files.exists(path)) {
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
@@ -37,6 +38,7 @@ public class PositionRates extends Employee{
                     }
 
                     if (fileContent.length == 5 && fileContent[1].equals(getPositionId())) {
+                        recordExists = true;
                         setDepartmentCode(fileContent[0]);
                         setPositionId(fileContent[1]);
                         setPosition(fileContent[2]);
@@ -56,6 +58,7 @@ public class PositionRates extends Employee{
         }catch (IOException e){
             System.out.println("An error has occurred. " + e);
         }
+        return recordExists;
     }
 
     public List<String> viewAllDepartmentRates(Path path, boolean updating){

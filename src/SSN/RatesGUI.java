@@ -1,3 +1,4 @@
+//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas
 package SSN;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ public class RatesGUI extends JFrame {
         contentPanel = new JPanel(new GridBagLayout());
 
         createRateButtons();
+        addBackButton();
 
         add(buttonPanel, BorderLayout.NORTH);
         add(new JScrollPane(contentPanel), BorderLayout.CENTER);
@@ -63,13 +65,31 @@ public class RatesGUI extends JFrame {
         buttonPanel.add(removeRecordButton, gbc);
 
         // Add action listeners to department buttons
-        addRecordButton.addActionListener(e -> registerRate());
+        addRecordButton.addActionListener(e -> registerRate(true));
         updateRecordButton.addActionListener(e -> updateRate());
         viewSingleRecordButton.addActionListener(e -> showRate());
         viewAllRecordsButton.addActionListener(e -> showDepartmentRates());
         removeRecordButton.addActionListener(e -> removeRate());
     }
 
+    private void addBackButton() {
+        JButton backButton = new JButton("Back to Menu");
+        GridBagConstraints backButtonConstraints = new GridBagConstraints();
+        backButtonConstraints.gridx = 3;
+        backButtonConstraints.gridy = 1; // Adjust the y-coordinate based on your layout
+        backButtonConstraints.insets = new Insets(10, 10, 10, 10);
+        backButtonConstraints.anchor = GridBagConstraints.CENTER;
+
+        backButton.addActionListener(e -> {
+            // Close the current window
+            dispose();
+
+            // Invoke the main GUI
+            SwingUtilities.invokeLater(Main::new);
+        });
+
+        buttonPanel.add(backButton, backButtonConstraints);
+    }
     private void clearContent(){
         // Clear existing components from contentPanel
         contentPanel.removeAll();
@@ -98,7 +118,42 @@ public class RatesGUI extends JFrame {
         dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
         contentPanel.add(positionsDropdown, dropdownConstraints);
     }
-    private void registerRate(){
+
+    private boolean validId(String id){
+        try {
+            Double.parseDouble(id);
+            return true;
+        }catch (NumberFormatException ignored){
+            return false;
+        }
+    }
+    private boolean validRate(String rate){
+        try {
+            Double.parseDouble(rate);
+            return true;
+        }catch (NumberFormatException ignored){
+            return false;
+        }
+    }
+
+    private void departmentDropdown(){
+        // Create and add label for Department selection
+        JLabel selectLabel = new JLabel("Select a Department Code from the drop-down list.");
+        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
+        selectLabelConstraints.gridx = 0;
+        selectLabelConstraints.gridy = 0;
+        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
+        contentPanel.add(selectLabel, selectLabelConstraints);
+
+        java.util.List<String> rateIdNumbers = positionRates.viewAllDepartments(Path.of("departments.txt"));
+        positionsDropdown = new JComboBox<>(rateIdNumbers.toArray(new String[0]));
+        GridBagConstraints dropdownConstraints = new GridBagConstraints();
+        dropdownConstraints.gridx = 0;
+        dropdownConstraints.gridy = 1;
+        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+        contentPanel.add(positionsDropdown, dropdownConstraints);
+    }
+    private void registerRate(boolean refresh){
         clearContent();
 
         GridBagConstraints textFieldConstraints = new GridBagConstraints();
@@ -108,14 +163,19 @@ public class RatesGUI extends JFrame {
         textFieldConstraints.anchor = GridBagConstraints.CENTER;
 
         // Create and add text fields dynamically
-        JTextField positionId = new JTextField(positionRates.getPositionId(), 15);
-        JTextField positionTitle = new JTextField(positionRates.getPosition(), 15);
-        JTextField positionPayRate = new JTextField(positionRates.getPosition(), 15);
+        JTextField positionId;
+        JTextField positionTitle;
+        JTextField positionPayRate;
 
-        positionId.setText(null);
-        positionTitle.setText(null);
-        positionPayRate.setText(null);
-
+        if (refresh){
+            positionId = new JTextField(15);
+            positionTitle = new JTextField(15);
+            positionPayRate = new JTextField(15);
+        }else {
+            positionId = new JTextField(positionRates.getPositionId(), 15);
+            positionTitle = new JTextField(positionRates.getPosition(), 15);
+            positionPayRate = new JTextField(positionRates.getPosition(), 15);
+        }
 
         // Create and add labels for text fields
         JLabel positionIdLabel = new JLabel("Position ID");
@@ -149,17 +209,31 @@ public class RatesGUI extends JFrame {
 
         submitButton.addActionListener(e -> {
             // Retrieve values from text fields
-            positionRates.setDepartmentCode(positionId.getText().substring(0, 4));
-            positionRates.setPositionId(positionId.getText());
+            if (validId(positionId.getText()) && positionId.getText().length() == 7){
+                positionRates.setDepartmentCode(positionId.getText().substring(0, 4));
+                positionRates.setPositionId(positionId.getText());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid ID Number\n(Must be numeric and seven characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerRate(true);
+            }
+
             positionRates.setPosition(positionTitle.getText());
-            positionRates.setPositionRegRate(Double.parseDouble(positionPayRate.getText()));
-            positionRates.setPositionOtRate(positionRates.getPositionRegRate() * 1.5);
+            if (validRate(positionPayRate.getText())){
+                positionRates.setPositionRegRate(Double.parseDouble(positionPayRate.getText()));
+                positionRates.setPositionOtRate(positionRates.getPositionRegRate() * 1.5);
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid Pay Rate\n(Must be numeric.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerRate(true);
+            }
 
             positionId.setText(null);
             positionTitle.setText(null);
             positionPayRate.setText(null);
 
             positionRates.fileProcessing(path, positionRates.registeredRates(path));
+            JOptionPane.showMessageDialog(this, "Record successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            clearContent();
+            registerRate(true);
         });
         contentPanel.add(submitButton, submitButtonConstraints);
 
@@ -239,18 +313,29 @@ public class RatesGUI extends JFrame {
         submitButton.addActionListener(e -> {
             positionRates.viewSingleRates(path, true);
             // Retrieve values from text fields
-            positionRates.setDepartmentCode(positionId.getText().substring(0, 4));
-            positionRates.setPositionId(positionId.getText());
+            if (validId(positionId.getText()) && positionId.getText().length() == 7){
+                positionRates.setDepartmentCode(positionId.getText().substring(0, 4));
+                positionRates.setPositionId(positionId.getText());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid ID Number\n(Must be numeric and seven characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            }
+
             positionRates.setPosition(positionTitle.getText());
-            String hourlyRate = positionPayRate.getText();
-            positionRates.setPositionRegRate(Double.parseDouble(hourlyRate));
-            positionRates.setPositionOtRate(positionRates.getPositionRegRate() * 1.5);
+            if (validRate(positionPayRate.getText())){
+                positionRates.setPositionRegRate(Double.parseDouble(positionPayRate.getText()));
+                positionRates.setPositionOtRate(positionRates.getPositionRegRate() * 1.5);
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid Pay Rate\n(Must be numeric.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            }
 
             positionId.setText(null);
             positionTitle.setText(null);
             positionPayRate.setText(null);
 
             positionRates.fileProcessing(path, positionRates.registeredRates(path));
+            JOptionPane.showMessageDialog(this, "Record successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            clearContent();
+            updateRate();
         });
         contentPanel.add(submitButton, submitButtonConstraints);
 
@@ -271,34 +356,14 @@ public class RatesGUI extends JFrame {
             positionRates.setPositionId(Objects.requireNonNull(positionsDropdown.getSelectedItem()).toString());
             positionRates.viewSingleRates(path, true);
 
-            JLabel removeMessage = new JLabel("Position Rates record successfully removed.");
-            GridBagConstraints messageConstraints = new GridBagConstraints();
-            messageConstraints.gridx = 0;
-            messageConstraints.gridy = 0;
-            messageConstraints.insets = new Insets(10, 10, 10, 10);
-            contentPanel.add(removeMessage, messageConstraints);
+            JOptionPane.showMessageDialog(this, "Record successfully removed.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            removeRate();
         });
     }
     private void showDepartmentRates() {
         clearContent();
 
-        // Get a list of department codes
-        java.util.List<String> departmentCodes = positionRates.viewAllDepartments(Path.of("departments.txt"));
-
-        // Create and add label for employee selection
-        JLabel selectLabel = new JLabel("Select a Department Code from the drop-down list.");
-        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
-        selectLabelConstraints.gridx = 0;
-        selectLabelConstraints.gridy = 0;
-        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(selectLabel, selectLabelConstraints);
-        // Create and add department dropdown
-        positionsDropdown = new JComboBox<>(departmentCodes.toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(positionsDropdown, dropdownConstraints);
+        departmentDropdown();
 
         // Add action listener to department dropdown
         positionsDropdown.addActionListener(e -> {
@@ -306,13 +371,11 @@ public class RatesGUI extends JFrame {
             positionRates.setDepartmentCode(Objects.requireNonNull(positionsDropdown.getSelectedItem()).toString());
 
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            clearContent();
 
             addHeaderRowCentered();
 
-            // Get a list of employees for the selected department
+            // Get a list of rates for the selected department
             java.util.List<String> rates = positionRates.viewAllDepartmentRates(path, false);
 
             for (int grid = 0; grid < rates.size(); grid++) {

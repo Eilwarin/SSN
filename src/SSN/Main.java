@@ -5,10 +5,6 @@ import java.awt.*;
 
 public class Main extends JFrame {
 
-    DepartmentGUI department = new DepartmentGUI();
-    EmployeeGUI employee = new EmployeeGUI();
-    RatesGUI rates = new RatesGUI();
-    PayrollGUI payroll = new PayrollGUI();
     public Main() {
         // Set the title of the window
         setTitle("SSN");
@@ -20,6 +16,8 @@ public class Main extends JFrame {
         JButton employeeButton = new JButton("Employee");
         JButton departmentButton = new JButton("Department");
         JButton payrollButton = new JButton("Payroll");
+        JButton taxInfoButton = new JButton("Tax Info");
+        JButton payRatesButton = new JButton("Pay Rates");
 
         // Create a panel to hold the buttons
         JPanel buttonPanel = new JPanel();
@@ -27,21 +25,42 @@ public class Main extends JFrame {
         buttonPanel.add(employeeButton);
         buttonPanel.add(departmentButton);
         buttonPanel.add(payrollButton);
+        buttonPanel.add(taxInfoButton);
+        buttonPanel.add(payRatesButton);
 
         // Add the button panel to the content pane
         getContentPane().add(buttonPanel, BorderLayout.NORTH);
 
-        // Set the size of the window
-        setSize(400, 200);
-
         pack();
+        // Set the size of the window
+        setSize(1280, 720);
         // Center the window on the screen
         setLocationRelativeTo(null);
         setVisible(true);
+
+        employeeButton.addActionListener(e -> {
+            dispose();
+            SwingUtilities.invokeLater(EmployeeGUI::new);
+        });
+        departmentButton.addActionListener(e -> {
+            dispose();
+            SwingUtilities.invokeLater(DepartmentGUI::new);
+        });
+        payrollButton.addActionListener(e -> {
+            dispose();
+            SwingUtilities.invokeLater(PayrollGUI::new);
+        });
+//        taxInfoButton.addActionListener();
+        payRatesButton.addActionListener(e -> {
+            dispose();
+            SwingUtilities.invokeLater(RatesGUI::new);
+        });
     }
+
+
 
     public static void main(String[] args) {
         // Create and display the GUI
-        SwingUtilities.invokeLater(() -> SwingUtilities.invokeLater(EmployeeGUI::new));
+        SwingUtilities.invokeLater(() -> SwingUtilities.invokeLater(Main::new));
     }
 }
