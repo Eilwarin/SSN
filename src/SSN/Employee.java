@@ -34,157 +34,79 @@ public class Employee extends Department{
 
         return newRecord;
     }
-    public List<Employee> updateEmployeeRecord() {
-        List<Employee> updatedRecords = new ArrayList<>();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader("employees.txt"));
-            String line;
-            boolean headerSkipped = false;
-
-            while ((line = bufferedReader.readLine()) != null) {
-                if (!headerSkipped) {
-                    headerSkipped = true;
-                    continue;
-                }
-
-                String[] employeeData = line.split("\t");
-
-                if (employeeData.length == 5 && employeeData[0].equals(getIdNumber())) {
-
-                    // Create an updated Employee object
-                    Employee updatedEmployee = new Employee(getIdNumber(), getFirstName(), getLastName(), getDepartmentCode(), getPosition());
-                    updatedRecords.add(updatedEmployee);
-                    System.out.println("Employee record updated successfully!");
-                } else {
-                    // If not the record to be updated, add the unchanged record to the list
-                    Employee unchangedEmployee = new Employee(employeeData[0], employeeData[1], employeeData[2], employeeData[3], employeeData[4]);
-                    updatedRecords.add(unchangedEmployee);
-                }
-            }
-            bufferedReader.close();
-
-        } catch (IOException e) {
-            System.out.println("An error has occurred: " + e);
-        }
-
-        return updatedRecords;
-    }
-
-    public void viewSingleEmployee(Path path){
+    public void viewSingleEmployee(Path path, boolean updateQuery){
+        StringBuilder unedited = new StringBuilder();
         try{
             if (Files.exists(path)) {
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
-                List<Employee> data = new ArrayList<>();
                 String line;
                 boolean headerSkipped = false;
-                System.out.print("Enter Employee ID Number: ");
-                setIdNumber(input.nextLine());
-                String[] employeeData;
+                String[] fileContent;
+
 
                 while ((line = bufferedReader.readLine()) != null) {
-                    if (!headerSkipped){
+                    if (!headerSkipped) {
                         headerSkipped = true;
                         continue;
                     }
-                    employeeData = line.split("\t");
+                    fileContent = line.split("\t");
 
-                    if (employeeData.length == 5 && employeeData[0].equals(getIdNumber())) {
-                        String idNo = employeeData[0];
-                        String fName = employeeData[1];
-                        String lName = employeeData[2];
-                        String dpName = employeeData[3];
-                        String position = employeeData[4];
+                    if (fileContent.length == 5 && !fileContent[0].equals(getIdNumber())) {
+                        unedited.append(line).append(System.lineSeparator());
+                    }
 
-                        Employee employee = new Employee(idNo, fName, lName, dpName, position);
-                        data.add(employee);
-                    }else {
-                        System.out.println("Employee record does not exist.");
+                    if (fileContent.length == 5 && fileContent[0].equals(getIdNumber())) {
+                        setIdNumber(fileContent[0]);
+                        setFirstName(fileContent[1]);
+                        setLastName(fileContent[2]);
+                        setDepartmentName(fileContent[3]);
+                        setPosition(fileContent[4]);
                     }
                 }
-                for (Employee employee :
-                        data) {
-                    System.out.println(employee);
-                }
-            }else {
-                System.out.print("\nThere are no available records. Would you like to create a new record? [y/n]: ");
-                if (input.nextLine().equals("y")){
-                    employeeFileProcessing(createEmployeeRecord(), path, validation(path));
-                }else {
-                    throw new FileNotFoundException("The employees file does not exist.");
-                }
+                bufferedReader.close();
+            }
+            if (updateQuery){
+                BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt"));
+                writer.write("ID No.\tF. Name\tL. Name\tDept. Name\tPosition");
+                writer.newLine();
+                writer.write(unedited.toString());
+                writer.close();
             }
         }catch (IOException e){
             System.out.println("An error has occurred. " + e);
         }
     }
 
-    public List<String> employeeIds(){
-        List<String> employeeIds = new ArrayList<>();
-        try {
-            if (Files.exists(Path.of("employees.txt"))){
-                BufferedReader reader = new BufferedReader(new FileReader(Path.of("employees.txt").toFile()));
+
+    public List<String> viewAllEmployees(Path path){
+        List<String> data = new ArrayList<>();
+        try{
+            if (Files.exists(path)){
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
                 String line;
                 boolean headerSkipped = false;
 
-                while ((line = reader.readLine()) != null) {
+                while ((line = bufferedReader.readLine()) != null) {
                     if (!headerSkipped) {
                         headerSkipped = true;
                         continue;
                     }
                     String[] fileContent = line.split("\t");
 
-                    if (fileContent.length == 5){
-                        employeeIds.add(fileContent[0]);
+                    if (fileContent.length == 5 && fileContent[0].substring(0, 4).equals(getDepartmentCode())) {
+                        data.add(fileContent[0]);
+                        setFirstName(fileContent[1]);
+                        setLastName(fileContent[2]);
+                        setDepartmentName(fileContent[3]);
+                        setPosition(fileContent[4]);
                     }
                 }
+                bufferedReader.close();
             }
-        }catch (IOException e){}
-        return employeeIds;
-    }
-    public void viewAllEmployees(Path path){
-        try{
-            if (Files.exists(path)) {
-                BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
-                List<Employee> data = new ArrayList<>();
-                String line;
-                boolean headerSkipped = false;
-                System.out.print("Enter Department Code: ");
-                String index = input.nextLine();
-
-                while ((line = bufferedReader.readLine()) != null) {
-                    if (!headerSkipped){
-                        headerSkipped = true;
-                        continue;
-                    }
-                    String[] employeeData = line.split("\t");
-
-                    if (employeeData.length == 6 && employeeData[3].equals(index)) {
-                        String idNo = employeeData[0];
-                        String fName = employeeData[1];
-                        String lName = employeeData[2];
-                        String dpCode = employeeData[3];
-                        String position = employeeData[4];
-
-                        Employee employee = new Employee(idNo, fName, lName, dpCode, position);
-                        data.add(employee);
-                    }
-                }
-                for (Employee employee :
-                        data) {
-                    System.out.println("\n" + employee.toString());
-                }
-            }else {
-                System.out.print("\nThere are no available records. Would you like to create a new record? [y/n]: ");
-                if (input.nextLine().equals("y")){
-                    employeeFileProcessing(createEmployeeRecord(), path, validation(path));
-                }else {
-                    throw new FileNotFoundException("The employees file does not exist.");
-                }
-            }
-
         }catch (IOException e){
             System.out.println("An error has occurred. " + e);
         }
+        return data;
     }
     public void employeeFileProcessing(List<Employee> record, Path path, boolean registered){
         try {

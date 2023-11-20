@@ -58,13 +58,13 @@ public class GUI extends JFrame {
         buttonPanel.add(viewAllRecordsButton, gbc);
 
         // Add action listeners to department buttons
-        addRecordButton.addActionListener(e -> createDepartment());
+        addRecordButton.addActionListener(e -> registerDepartment());
         updateRecordButton.addActionListener(e -> updateDepartment());
-        viewSingleRecordButton.addActionListener(e -> showDepartmentView());
+        viewSingleRecordButton.addActionListener(e -> showDepartment());
         viewAllRecordsButton.addActionListener(e -> showAllDepartments());
     }
 
-    private void createDepartment(){
+    private void registerDepartment(){
         // Clear existing components from contentPanel
         contentPanel.removeAll();
         contentPanel.revalidate();
@@ -209,7 +209,6 @@ public class GUI extends JFrame {
         contentPanel.repaint();
     }
     private void showAllDepartments() {
-        Path path = Path.of("departments.txt");
         java.util.List<String> departments = department.viewAllDepartments(path);
 
         contentPanel.removeAll();
@@ -228,12 +227,11 @@ public class GUI extends JFrame {
         contentPanel.revalidate();
         contentPanel.repaint();
     }
-    private void showDepartmentView() {
+    private void showDepartment() {
         // Clear existing components from contentPanel
         contentPanel.removeAll();
         contentPanel.revalidate();
         contentPanel.repaint();
-        Path path = Path.of("departments.txt");
 
         // Create and add label for department selection
         JLabel selectLabel = new JLabel("Select a department from the drop-down list.");
