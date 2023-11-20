@@ -1,3 +1,4 @@
+//Created by Rochelle Gordon, Rajaire Thomas, Alexi Brooks, Dontray Blackwood, Jamari Ferguson
 package SSN;
 
 import javax.swing.*;
@@ -99,6 +100,28 @@ public class EmployeeGUI extends JFrame {
         contentPanel.revalidate();
         contentPanel.repaint();
     }
+    private void employeeDropdown(){
+        // Create and add label for employee selection
+        JLabel selectLabel = new JLabel("Select an Employee ID Number from the drop-down list.");
+        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
+        selectLabelConstraints.gridx = 0;
+        selectLabelConstraints.gridy = 0;
+        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
+        contentPanel.add(selectLabel, selectLabelConstraints);
+
+        java.util.List<String> employeeIdNumbers = employee.viewAllEmployees(path, true);
+        if (employeeIdNumbers.isEmpty()){
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+        }else {
+            employeeDropdown = new JComboBox<>(employeeIdNumbers.toArray(new String[0]));
+            GridBagConstraints dropdownConstraints = new GridBagConstraints();
+            dropdownConstraints.gridx = 0;
+            dropdownConstraints.gridy = 1;
+            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+            contentPanel.add(employeeDropdown, dropdownConstraints);
+        }
+
+    }
     private boolean validId(String id){
         try {
             Double.parseDouble(id);
@@ -133,6 +156,29 @@ public class EmployeeGUI extends JFrame {
         }
         return true; // No non-letter characters found
     }
+    private void departmentDropdown(){
+        // Create and add label for employee selection
+        JLabel selectLabel = new JLabel("Select a Department Code from the drop-down list.");
+        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
+        selectLabelConstraints.gridx = 0;
+        selectLabelConstraints.gridy = 0;
+        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
+        contentPanel.add(selectLabel, selectLabelConstraints);
+
+        // Get a list of department codes
+        java.util.List<String> departmentCodes = employee.viewAllDepartments(Path.of("departments.txt"));
+        if (departmentCodes.isEmpty()){
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+        }else {
+            // Create and add department dropdown
+            employeeDropdown = new JComboBox<>(departmentCodes.toArray(new String[0]));
+            GridBagConstraints dropdownConstraints = new GridBagConstraints();
+            dropdownConstraints.gridx = 0;
+            dropdownConstraints.gridy = 1;
+            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+            contentPanel.add(employeeDropdown, dropdownConstraints);
+        }
+    }
     private void registerEmployee(){
         // Clear existing components from contentPanel
         clearContent();
@@ -144,15 +190,10 @@ public class EmployeeGUI extends JFrame {
         textFieldConstraints.anchor = GridBagConstraints.CENTER;
 
         // Create and add text fields dynamically
-        JTextField employeeIdNumber = new JTextField(employee.getIdNumber(), 15);
-        JTextField employeeFirstName = new JTextField(employee.getFirstName(), 15);
-        JTextField employeeLastName = new JTextField(employee.getLastName(), 15);
-        JTextField employeePosition = new JTextField(employee.getPosition(), 15);
-
-        employeeIdNumber.setText(null);
-        employeeFirstName.setText(null);
-        employeeLastName.setText(null);
-        employeePosition.setText(null);
+        JTextField employeeIdNumber = new JTextField(15);
+        JTextField employeeFirstName = new JTextField(15);
+        JTextField employeeLastName = new JTextField(15);
+        JTextField employeePosition = new JTextField(15);
 
         // Create and add labels for text fields
         JLabel idNumberLabel = new JLabel("ID Number:");
@@ -193,47 +234,62 @@ public class EmployeeGUI extends JFrame {
 
         submitButton.addActionListener(e -> {
             // Retrieve values from text fields
-            employee.setDepartmentCode(employeeIdNumber.getText().substring(0, 4));
-            if (validId(employeeIdNumber.getText()) && employee.dataGather(Path.of("departments.txt"))){
-                employee.setIdNumber(employeeIdNumber.getText());
-                employee.setPositionId(employee.getIdNumber());
-            }else {
-                JOptionPane.showMessageDialog(this, "Invalid ID Number\n(Must be numeric and 7 characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
-                registerEmployee();
-            }
+            submitAction(employeeIdNumber, employeeFirstName, employeeLastName, employeePosition);
+            Path departmentFile = Path.of("departments.txt");
 
-            if (validName(employeeFirstName.getText())){
-                employee.setFirstName(employeeFirstName.getText());
-            }else {
-                JOptionPane.showMessageDialog(this, "Invalid Name Format\n(Must be alphabetic. Hyphens and spaces allowed.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
-                registerEmployee();
-            }
-
-            if (validName(employeeLastName.getText())){
-                employee.setLastName(employeeLastName.getText());
-            }else {
-                JOptionPane.showMessageDialog(this, "Invalid Name Format\n(Must be alphabetic. Hyphens and spaces allowed.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
-                registerEmployee();
-            }
-
-            if (validPosition(employeePosition.getText())){
-                employee.setPosition(employeePosition.getText());
-            }else {
-                JOptionPane.showMessageDialog(this, "Invalid Name Format\n(Must be alphabetic. Hyphens and spaces allowed.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
-                registerEmployee();
-            }
-
-            employeeIdNumber.setText(null);
-            employeeFirstName.setText(null);
-            employeeLastName.setText(null);
-            employeePosition.setText(null);
-
-            employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.validation(path));
+            //Writing to the employee file with the new employee's details.
+            employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.validation(path), employee.dataGather(departmentFile));
+            JOptionPane.showMessageDialog(this, "Record successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            clearContent();
+            registerEmployee();
         });
         contentPanel.add(submitButton, submitButtonConstraints);
+
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
+    }
+    private void submitAction(JTextField employeeIdNumber, JTextField employeeFirstName, JTextField employeeLastName, JTextField employeePosition) {
+        employee.setDepartmentCode(employeeIdNumber.getText().substring(0, 4));
+        Path departmentFile = Path.of("departments.txt");
+        if (!(employee.dataGather(departmentFile))){
+            JOptionPane.showMessageDialog(this, "Department Code: " + employee.getDepartmentCode() + " does not exist.\n" +
+                    "(You must add the Department before adding an Employee)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            registerEmployee();
+        }
+        if (validId(employeeIdNumber.getText())){
+
+            employee.setIdNumber(employeeIdNumber.getText());
+            employee.setPositionId(employee.getIdNumber());
+        }else {
+            JOptionPane.showMessageDialog(this, "Invalid ID Number\n(Must be numeric and 7 characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            registerEmployee();
+        }
+
+        if (validName(employeeFirstName.getText())){
+            employee.setFirstName(employeeFirstName.getText());
+        }else {
+            JOptionPane.showMessageDialog(this, "Invalid Name Format\n(Must be alphabetic. Hyphens and spaces allowed.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            registerEmployee();
+        }
+
+        if (validName(employeeLastName.getText())){
+            employee.setLastName(employeeLastName.getText());
+        }else {
+            JOptionPane.showMessageDialog(this, "Invalid Name Format\n(Must be alphabetic. Hyphens and spaces allowed.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            registerEmployee();
+        }
+
+        if (validPosition(employeePosition.getText())){
+            employee.setPosition(employeePosition.getText());
+        }else {
+            JOptionPane.showMessageDialog(this, "Invalid Name Format\n(Must be alphabetic. Hyphens and spaces allowed.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            registerEmployee();
+        }
+
+        employeeIdNumber.setText(null);
+        employeeFirstName.setText(null);
+        employeeLastName.setText(null);
+        employeePosition.setText(null);
     }
     private void updateEmployee() {
         // Clear existing components from contentPanel
@@ -277,25 +333,9 @@ public class EmployeeGUI extends JFrame {
     }
     private void removeEmployee(){
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
-        // Create and add label for employee selection
-        JLabel selectLabel = new JLabel("Select an Employee ID Number from the drop-down list.");
-        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
-        selectLabelConstraints.gridx = 0;
-        selectLabelConstraints.gridy = 0;
-        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(selectLabel, selectLabelConstraints);
-
-        java.util.List<String> employeeIdNumbers = employee.viewAllEmployees(path, true);
-        employeeDropdown = new JComboBox<>(employeeIdNumbers.toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(employeeDropdown, dropdownConstraints);
+        employeeDropdown();
 
         // Add action listener to department dropdown
         employeeDropdown.addActionListener(e -> {
@@ -305,20 +345,14 @@ public class EmployeeGUI extends JFrame {
             employee.setIdNumber(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
             employee.viewSingleEmployee(path, true);
 
-            JLabel removeMessage = new JLabel("Employee record successfully removed.");
-            GridBagConstraints messageConstraints = new GridBagConstraints();
-            messageConstraints.gridx = 0;
-            messageConstraints.gridy = 0;
-            messageConstraints.insets = new Insets(10, 10, 10, 10);
-            contentPanel.add(removeMessage, messageConstraints);
+            JOptionPane.showMessageDialog(this, "Record successfully removed.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            removeEmployee();
         });
 
     }
     private void addTextFieldsForUpdate() {
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         GridBagConstraints textFieldConstraints = new GridBagConstraints();
         textFieldConstraints.gridx = 0;
@@ -372,45 +406,25 @@ public class EmployeeGUI extends JFrame {
         submitButton.addActionListener(e -> {
             employee.viewSingleEmployee(path, true);
             // Retrieve values from text fields
-            employee.setIdNumber(employeeIdNumber.getText());
-            employee.setFirstName(employeeFirstName.getText());
-            employee.setLastName(employeeLastName.getText());
-            employee.setPosition(employeePosition.getText());
-            employee.setDepartmentCode(employee.getIdNumber().substring(0, 4));
-            employee.setPositionId(employee.getIdNumber().substring(4, 7));
+            submitAction(employeeIdNumber, employeeFirstName, employeeLastName, employeePosition);
 
             employeeIdNumber.setText(null);
             employeeFirstName.setText(null);
             employeeLastName.setText(null);
             employeePosition.setText(null);
 
-            employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.validation(path));
+            employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.validation(path), employee.dataGather(Path.of("departments.txt")));
+            JOptionPane.showMessageDialog(this, "Record successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            updateEmployee();
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void showDepartmentEmployees() {
         clearContent();
 
-        // Get a list of department codes
-        java.util.List<String> departmentCodes = employee.viewAllDepartments(Path.of("departments.txt"));
-
-        // Create and add label for employee selection
-        JLabel selectLabel = new JLabel("Select a Department Code from the drop-down list.");
-        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
-        selectLabelConstraints.gridx = 0;
-        selectLabelConstraints.gridy = 0;
-        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(selectLabel, selectLabelConstraints);
-        // Create and add department dropdown
-        employeeDropdown = new JComboBox<>(departmentCodes.toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(employeeDropdown, dropdownConstraints);
+        departmentDropdown();
 
         // Add action listener to department dropdown
         employeeDropdown.addActionListener(e -> {
@@ -419,54 +433,39 @@ public class EmployeeGUI extends JFrame {
 
             // Clear existing components from contentPanel
             clearContent();
-            addHeaderRowCentered();
 
             // Get a list of employees for the selected department
             java.util.List<String> employees = employee.viewAllEmployees(path, false);
 
-            for (int grid = 0; grid < employees.size(); grid++) {
-                employee.setIdNumber(employees.get(grid));
-                employee.viewSingleEmployee(path, false);
-                addLabelsBasedOnOptionCentered(grid);
+            if(employees.isEmpty()){
+                JOptionPane.showMessageDialog(this, "There are no records for this Department.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                showDepartmentEmployees();
+            }else {
+                addHeaderRowCentered();
+                for (int grid = 0; grid < employees.size(); grid++) {
+                    employee.setIdNumber(employees.get(grid));
+                    employee.viewSingleEmployee(path, false);
+                    addLabelsBasedOnOptionCentered(grid);
+                }
             }
 
             // Refresh the UI
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            refreshUi();
         });
 
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void showEmployee() {
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
-        // Create and add label for department selection
-        JLabel selectLabel = new JLabel("Select an Employee ID from the drop-down list.");
-        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
-        selectLabelConstraints.gridx = 0;
-        selectLabelConstraints.gridy = 0;
-        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(selectLabel, selectLabelConstraints);
-
-        java.util.List<String> employeeIdNumbers = employee.viewAllEmployees(path, true);
-        employeeDropdown = new JComboBox<>(employeeIdNumbers.toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(employeeDropdown, dropdownConstraints);
+        employeeDropdown();
 
         // Add action listener to department dropdown
         employeeDropdown.addActionListener(e -> {
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            clearContent();
 
             // Add header labels centered
             addHeaderRowCentered();
@@ -478,13 +477,10 @@ public class EmployeeGUI extends JFrame {
         });
 
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void addHeaderRowCentered() {
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         GridBagConstraints headerConstraints = new GridBagConstraints();
         headerConstraints.gridx = 0;
@@ -509,6 +505,8 @@ public class EmployeeGUI extends JFrame {
         contentPanel.add(departmentNameLabel, headerConstraints);
         headerConstraints.gridx = 4;
         contentPanel.add(positionLabel, headerConstraints);
+
+        refreshUi();
     }
     private void addLabelsBasedOnOptionCentered(int grid) {
         GridBagConstraints labelConstraints = new GridBagConstraints();
@@ -542,9 +540,6 @@ public class EmployeeGUI extends JFrame {
         labelConstraints.gridy = grid * 2 + 1; // Increase y-coordinate for each set
         contentPanel.add(position, labelConstraints);
 
-
-    }
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(EmployeeGUI::new);
+        refreshUi();
     }
 }

@@ -103,7 +103,7 @@ public class Employee extends Department{
 
         return employeeIds;
     }
-    public void employeeFileProcessing(List<Employee> record, Path path, boolean registered){
+    public void employeeFileProcessing(List<Employee> record, Path path, boolean registered, boolean departmentExists){
         try {
             if (!Files.exists(path)) {
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile()));
@@ -113,7 +113,7 @@ public class Employee extends Department{
                 bufferedWriter.close();
             }
 
-            if (!registered){
+            if (!registered && departmentExists){
                 this.dataGather(Path.of("departments.txt"));
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile(), true));
 
@@ -153,7 +153,7 @@ public class Employee extends Department{
                     }
                 }
                 bufferedReader.close();
-            }else {throw new FileNotFoundException("Initial record created.");}
+            }
         }catch (IOException e){
             System.out.println("An error has occurred.");
         }
@@ -183,7 +183,7 @@ public class Employee extends Department{
                     }
                 }
                 bufferedReader.close();
-            }else {throw new FileNotFoundException("The employees file does not exist.");}
+            }
         }catch (IOException e){
             System.out.println("An error has occurred.\n" + e);
         }

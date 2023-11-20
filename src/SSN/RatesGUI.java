@@ -1,4 +1,4 @@
-//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas
+//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
 package SSN;
 
 import javax.swing.*;
@@ -111,12 +111,16 @@ public class RatesGUI extends JFrame {
         contentPanel.add(selectLabel, selectLabelConstraints);
 
         java.util.List<String> rateIdNumbers = positionRates.viewAllDepartmentRates(path, true);
-        positionsDropdown = new JComboBox<>(rateIdNumbers.toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(positionsDropdown, dropdownConstraints);
+        if (rateIdNumbers.isEmpty()){
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+        }else {
+            positionsDropdown = new JComboBox<>(rateIdNumbers.toArray(new String[0]));
+            GridBagConstraints dropdownConstraints = new GridBagConstraints();
+            dropdownConstraints.gridx = 0;
+            dropdownConstraints.gridy = 1;
+            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+            contentPanel.add(positionsDropdown, dropdownConstraints);
+        }
     }
 
     private boolean validId(String id){
@@ -145,13 +149,18 @@ public class RatesGUI extends JFrame {
         selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
         contentPanel.add(selectLabel, selectLabelConstraints);
 
-        java.util.List<String> rateIdNumbers = positionRates.viewAllDepartments(Path.of("departments.txt"));
-        positionsDropdown = new JComboBox<>(rateIdNumbers.toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(positionsDropdown, dropdownConstraints);
+        java.util.List<String> departments = positionRates.viewAllDepartments(Path.of("departments.txt"));
+        if(departments.isEmpty()){
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+        }else {
+            positionsDropdown = new JComboBox<>(departments.toArray(new String[0]));
+            GridBagConstraints dropdownConstraints = new GridBagConstraints();
+            dropdownConstraints.gridx = 0;
+            dropdownConstraints.gridy = 1;
+            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+            contentPanel.add(positionsDropdown, dropdownConstraints);
+        }
+
     }
     private void registerRate(boolean refresh){
         clearContent();
@@ -372,17 +381,20 @@ public class RatesGUI extends JFrame {
             // Clear existing components from contentPanel
             clearContent();
 
-            addHeaderRowCentered();
-
             // Get a list of rates for the selected department
             java.util.List<String> rates = positionRates.viewAllDepartmentRates(path, false);
 
-            for (int grid = 0; grid < rates.size(); grid++) {
-                positionRates.setPositionId(rates.get(grid));
-                positionRates.viewSingleRates(path, false);
-                addLabelsBasedOnOptionCentered(grid);
+            if (rates.isEmpty()){
+                JOptionPane.showMessageDialog(this, "There are no records for this Department.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                showDepartmentRates();
+            }else {
+                addHeaderRowCentered();
+                for (int grid = 0; grid < rates.size(); grid++) {
+                    positionRates.setPositionId(rates.get(grid));
+                    positionRates.viewSingleRates(path, false);
+                    addLabelsBasedOnOptionCentered(grid);
+                }
             }
-
             // Refresh the UI
             refreshUi();
         });
@@ -399,9 +411,7 @@ public class RatesGUI extends JFrame {
         // Add action listener to department dropdown
         positionsDropdown.addActionListener(e -> {
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            clearContent();
 
             // Add header labels centered
             addHeaderRowCentered();
