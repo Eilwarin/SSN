@@ -3,11 +3,8 @@ package SSN;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class Employee extends Department{
     protected String idNumber;
@@ -15,14 +12,6 @@ public class Employee extends Department{
     protected String lastName;
 
     public Employee(){}
-
-    public Employee(String idNo, String fName, String lName, String deptCode, String pos){
-        idNumber = idNo;
-        firstName = fName;
-        lastName = lName;
-        departmentCode = deptCode;
-        position = pos;
-    }
 
     public List<Employee> createEmployeeRecord(){
         List<Employee> newRecord = new ArrayList<>();
@@ -134,7 +123,8 @@ public class Employee extends Department{
                     bufferedWriter.newLine();
                 }
                 bufferedWriter.close();
-                filesProcessing(Path.of("positions.txt"), validation(Path.of("positions.txt")));
+                Path positionsFile = Path.of("positions.txt");
+                filesProcessing(positionsFile, validation(positionsFile));
             }
 
         }catch (IOException e){
@@ -166,6 +156,7 @@ public class Employee extends Department{
                 bufferedReader.close();
             }else {throw new FileNotFoundException("Initial record created.");}
         }catch (IOException e){
+            System.out.println("An error has occurred.");
         }
 
         return employeeRegistered;

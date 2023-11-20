@@ -5,7 +5,7 @@ import java.awt.*;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class EmployeeGUI extends JFrame {
+public class TaxGUI extends JFrame {
 
     private JPanel buttonPanel;
     private JPanel contentPanel;
@@ -13,14 +13,14 @@ public class EmployeeGUI extends JFrame {
     private Employee employee = new Employee();
     private final Path path = Path.of("employees.txt");
 
-    public EmployeeGUI() {
-        setTitle("Employees");
+    public TaxGUI() {
+        setTitle("Employee's Tax Information");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         buttonPanel = new JPanel(new GridBagLayout());
         contentPanel = new JPanel(new GridBagLayout());
 
-        createEmployeeButtons();
+        createTaxButtons();
 
         add(buttonPanel, BorderLayout.NORTH);
         add(new JScrollPane(contentPanel), BorderLayout.CENTER);
@@ -31,7 +31,7 @@ public class EmployeeGUI extends JFrame {
         setVisible(true);
     }
 
-    private void createEmployeeButtons() {
+    private void createTaxButtons() {
         // Create department buttons
         JButton addRecordButton = new JButton("Add new record");
         JButton updateRecordButton = new JButton("Update existing record");
@@ -484,6 +484,6 @@ public class EmployeeGUI extends JFrame {
 
     }
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(EmployeeGUI::new);
+        SwingUtilities.invokeLater(TaxGUI::new);
     }
 }

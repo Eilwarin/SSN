@@ -19,11 +19,9 @@ public class EmployeeTax extends Payroll{
     protected double paidIncomeTax;
     protected double paidNisTax;
     protected double paidEduTax;
-    private Scanner input;
 
 
     public EmployeeTax(){
-        input = new Scanner(System.in);
     }
 
     public EmployeeTax(String trn, String nis, double eduTaxRate, double nisTaxRate, double incomeTaxRate, double incomeThreshold){

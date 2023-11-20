@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Payroll extends Employee{
+public class Payroll extends PositionRates{
     protected float hoursWorked;
     protected double regularPay;
     protected double overtimePay;
@@ -20,10 +20,8 @@ public class Payroll extends Employee{
     protected double eduTax;
     protected LocalDate processedDate;
     protected String chequeNumber;
-    private Scanner input;
 
     public Payroll(){
-        input = new Scanner(System.in);
     }
 
     public Payroll(LocalDate processedDate, String chqNo, String idNo, String fName, String lName, String deptCode,

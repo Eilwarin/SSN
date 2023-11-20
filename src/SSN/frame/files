@@ -70,14 +70,14 @@ PROCESSED PAYROLL
 
 -   METHODS   -
 
-EMPLOYEES
-    - Create a new record (Implemented)
-    - Update an existing record (Implemented)
-    - View a single existing record
-    - View all existing records by department
-    - Create file to store records
-    - Validate by search in existing file for newly created record
-    - Access and assign the corresponding value of the Department Name from the Department Code
+EMPLOYEES (GUI)
+    - Create a new record (GUI)
+    - Update an existing record (GUI)
+    - View a single existing record (GUI)
+    - View all existing records by department (GUI)
+    - Create file to store records (GUI)
+    - Validate by search in existing file for newly created record (GUI)
+    - Access and assign the corresponding value of the Department Name from the Department Code (GUI)
 
 EMPLOYEES TAX
     - Create a new record (Implemented)
@@ -87,7 +87,7 @@ EMPLOYEES TAX
     - Create file to store records
     - Validate by search in existing file for newly created record
 
-DEPARTMENTS
+DEPARTMENTS (GUI)
     - Create a new record (GUI)
     - Update an existing record (GUI)
     - View a single existing record (GUI)
@@ -95,7 +95,7 @@ DEPARTMENTS
     - Create file to store records (GUI)
     - Validate by search in existing file for newly created record (GUI)
 
-POSITIONS
+POSITIONS (GUI)
     - Create file to store records
     - Validate by search in existing file for newly created record
 
