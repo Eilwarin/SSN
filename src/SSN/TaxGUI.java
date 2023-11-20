@@ -7,11 +7,11 @@
 //
 //public class TaxGUI extends JFrame {
 //
-//    private JPanel buttonPanel;
-//    private JPanel contentPanel;
-//    private JComboBox<String> employeeDropdown;
-//    private EmployeeTax tax = new EmployeeTax();
-//    private final Path path = Path.of("employees.txt");
+//    private final JPanel buttonPanel;
+//    private final JPanel contentPanel;
+//    private JComboBox<String> taxDropdown;
+//    private final EmployeeTax tax = new EmployeeTax();
+//    private final Path path = Path.of("tax_info.txt");
 //
 //    public TaxGUI() {
 //        setTitle("Employee's Tax Information");
@@ -27,6 +27,7 @@
 //
 //        // Set frame properties
 //        pack();
+//        setSize(1280, 720);
 //        setLocationRelativeTo(null); // Center the frame on the screen
 //        setVisible(true);
 //    }
@@ -36,7 +37,7 @@
 //        JButton addRecordButton = new JButton("Add new record");
 //        JButton updateRecordButton = new JButton("Update existing record");
 //        JButton viewSingleRecordButton = new JButton("View a single record");
-//        JButton viewAllRecordsButton = new JButton("View all records");
+//        JButton viewAllRecordsButton = new JButton("View all records (by Department)");
 //        JButton removeRecordButton = new JButton("Remove a record");
 //
 //        // Set layout manager for buttonPanel
@@ -69,11 +70,20 @@
 //        removeRecordButton.addActionListener(e -> removeEmployee());
 //    }
 //
-//    private void registerEmployee(){
+//    private void clearContent(){
 //        // Clear existing components from contentPanel
 //        contentPanel.removeAll();
 //        contentPanel.revalidate();
 //        contentPanel.repaint();
+//    }
+//    private void refreshUi(){
+//        // Refresh the UI
+//        contentPanel.revalidate();
+//        contentPanel.repaint();
+//    }
+//    private void registerEmployee(){
+//        // Clear existing components from contentPanel
+//        clearContent();
 //
 //        GridBagConstraints textFieldConstraints = new GridBagConstraints();
 //        textFieldConstraints.gridx = 0;
@@ -82,21 +92,14 @@
 //        textFieldConstraints.anchor = GridBagConstraints.CENTER;
 //
 //        // Create and add text fields dynamically
-//        JTextField employeeIdNumber = new JTextField(employee.getIdNumber(), 15);
-//        JTextField employeeFirstName = new JTextField(employee.getFirstName(), 15);
-//        JTextField employeeLastName = new JTextField(employee.getLastName(), 15);
-//        JTextField employeePosition = new JTextField(employee.getPosition(), 15);
-//
-//        employeeIdNumber.setText(null);
-//        employeeFirstName.setText(null);
-//        employeeLastName.setText(null);
-//        employeePosition.setText(null);
+//        JTextField employeeIdNumber = new JTextField(15);
+//        JTextField employeeTrn = new JTextField(15);
+//        JTextField employeeNis = new JTextField(15);
 //
 //        // Create and add labels for text fields
 //        JLabel idNumberLabel = new JLabel("ID Number:");
-//        JLabel firstNameLabel = new JLabel("First Name:");
-//        JLabel lastNameLabel = new JLabel("Last Name:");
-//        JLabel positionLabel = new JLabel("Job Title/Position:");
+//        JLabel firstNameLabel = new JLabel("TRN:");
+//        JLabel lastNameLabel = new JLabel("NIS:");
 //
 //        // Add labels and text fields to contentPanel
 //        contentPanel.add(idNumberLabel, textFieldConstraints);
@@ -107,62 +110,43 @@
 //        textFieldConstraints.gridy = 2;
 //        contentPanel.add(firstNameLabel, textFieldConstraints);
 //        textFieldConstraints.gridx = 1;
-//        contentPanel.add(employeeFirstName, textFieldConstraints);
+//        contentPanel.add(employeeTrn, textFieldConstraints);
 //
 //        textFieldConstraints.gridx = 0;
 //        textFieldConstraints.gridy = 3;
 //        contentPanel.add(lastNameLabel, textFieldConstraints);
 //        textFieldConstraints.gridx = 1;
-//        contentPanel.add(employeeLastName, textFieldConstraints);
+//        contentPanel.add(employeeNis, textFieldConstraints);
 //
-//        textFieldConstraints.gridx = 0;
-//        textFieldConstraints.gridy = 4;
-//        contentPanel.add(positionLabel, textFieldConstraints);
-//        textFieldConstraints.gridx = 1;
-//        contentPanel.add(employeePosition, textFieldConstraints);
 //
 //        JButton submitButton = new JButton("Submit");
 //        GridBagConstraints submitButtonConstraints = new GridBagConstraints();
 //        submitButtonConstraints.gridx = 0;
-//        submitButtonConstraints.gridy = 5; // Adjust the y-coordinate based on your layout
+//        submitButtonConstraints.gridy = 4; // Adjust the y-coordinate based on your layout
 //        submitButtonConstraints.gridwidth = 2; // Span two columns
 //        submitButtonConstraints.insets = new Insets(10, 10, 10, 10);
 //        submitButtonConstraints.anchor = GridBagConstraints.CENTER;
 //
 //        submitButton.addActionListener(e -> {
 //            // Retrieve values from text fields
-//            employee.setIdNumber(employeeIdNumber.getText());
-//            employee.setFirstName(employeeFirstName.getText());
-//            employee.setLastName(employeeLastName.getText());
-//            employee.setPosition(employeePosition.getText());
-//            employee.setDepartmentCode(employee.getIdNumber().substring(0, 4));
-//            employee.setPositionId(employee.getIdNumber());
-//
-//            JLabel removeMessage = new JLabel("Employee record successfully created.");
-//            GridBagConstraints messageConstraints = new GridBagConstraints();
-//            messageConstraints.gridx = 0;
-//            messageConstraints.gridy = 0;
-//            messageConstraints.insets = new Insets(10, 10, 10, 10);
-//            contentPanel.add(removeMessage, messageConstraints);
+//            tax.setIdNumber(employeeIdNumber.getText());
+//            tax.setTrn(employeeTrn.getText());
+//            tax.setNis(employeeNis.getText());
+////            tax.setIncomeTaxable();
 //
 //            employeeIdNumber.setText(null);
-//            employeeFirstName.setText(null);
-//            employeeLastName.setText(null);
-//            employeePosition.setText(null);
+//            employeeTrn.setText(null);
+//            employeeNis.setText(null);
 //
-//            employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.registered(path));
+//            tax.taxInformation(path, tax.registeredTax(path), tax.createRecord());
 //        });
 //        contentPanel.add(submitButton, submitButtonConstraints);
 //        // Refresh the UI
-//        contentPanel.revalidate();
-//        contentPanel.repaint();
+//        refreshUi();
 //    }
 //    private void updateEmployee() {
 //        // Clear existing components from contentPanel
-//        contentPanel.removeAll();
-//        contentPanel.revalidate();
-//        contentPanel.repaint();
-//
+//        clearContent();
 //
 //        // Create and add label for employee selection
 //        JLabel selectLabel = new JLabel("Select an Employee ID Number from the drop-down list.");

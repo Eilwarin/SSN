@@ -82,8 +82,8 @@ public class RatesGUI extends JFrame {
         contentPanel.repaint();
     }
     private void ratesDropdown(){
-        // Create and add label for department selection
-        JLabel selectLabel = new JLabel("Select an Rate ID from the drop-down list.");
+        // Create and add label for position selection
+        JLabel selectLabel = new JLabel("Select a Rate ID from the drop-down list.");
         GridBagConstraints selectLabelConstraints = new GridBagConstraints();
         selectLabelConstraints.gridx = 0;
         selectLabelConstraints.gridy = 0;

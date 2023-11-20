@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class EmployeeTax extends PositionRates{
     protected String trn;
@@ -22,11 +21,6 @@ public class EmployeeTax extends PositionRates{
 
 
     public EmployeeTax(){
-    }
-
-    public EmployeeTax(String trn, String nis, double eduTaxRate, double nisTaxRate, double incomeTaxRate, double incomeThreshold){
-        this.trn = trn;
-        this.nis = nis;
     }
 
     public List<EmployeeTax> createRecord(){
@@ -48,7 +42,7 @@ public class EmployeeTax extends PositionRates{
                 BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile(), true));
                 for(EmployeeTax tax : record){
                     writer.write(tax.getIdNumber() + "\t" + tax.getTrn() + "\t" + tax.getNis() + "\t" + tax.isIncomeTaxable()
-                    + "\t" + tax.getPaidIncomeTax() + "\t" + getPaidNisTax() + "\t" + getPaidEduTax());
+                    + "\t" + getPaidIncomeTax() + "\t" + getPaidNisTax() + "\t" + getPaidEduTax());
                     writer.newLine();
                 }
                 writer.close();
@@ -84,30 +78,6 @@ public class EmployeeTax extends PositionRates{
         }catch (IOException ignored){}
 
         return registered;
-    }
-
-    public void taxesPaid(Path path, boolean registered){
-        try {
-            if (registered){
-                BufferedReader reader = new BufferedReader(new FileReader(path.toFile()));
-                String line;
-                boolean headerSkipped = false;
-
-                while((line = reader.readLine()) != null){
-                    if (!headerSkipped){
-                        headerSkipped = true;
-                        continue;
-                    }
-                    String[] fileContent = line.split("\t");
-
-                    if (fileContent.length == 7 && fileContent[0].equals(getIdNumber())){
-                        setPaidIncomeTax(Double.parseDouble(fileContent[4]));
-                        setPaidNisTax(Double.parseDouble(fileContent[5]));
-                        setPaidEduTax(Double.parseDouble(fileContent[6]));
-                    }
-                }
-            }
-        }catch (IOException ignored){}
     }
 
     public String getTrn() {

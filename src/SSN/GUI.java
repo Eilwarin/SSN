@@ -65,11 +65,20 @@ public class GUI extends JFrame {
         viewAllRecordsButton.addActionListener(e -> showAllDepartments());
     }
 
-    private void registerDepartment(){
+    private void clearContent(){
         // Clear existing components from contentPanel
         contentPanel.removeAll();
         contentPanel.revalidate();
         contentPanel.repaint();
+    }
+    private void refreshUi(){
+        // Refresh the UI
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+    private void registerDepartment(){
+        // Clear existing components from contentPanel
+        clearContent();
 
         GridBagConstraints textFieldConstraints = new GridBagConstraints();
         textFieldConstraints.gridx = 0;
@@ -112,17 +121,13 @@ public class GUI extends JFrame {
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void updateDepartment() {
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
-
+        clearContent();
         // Create and add label for department selection
-        JLabel selectLabel = new JLabel("Select a department from the drop-down list.");
+        JLabel selectLabel = new JLabel("Select a Department from the drop-down list.");
         GridBagConstraints selectLabelConstraints = new GridBagConstraints();
         selectLabelConstraints.gridx = 0;
         selectLabelConstraints.gridy = 0;
@@ -140,9 +145,7 @@ public class GUI extends JFrame {
         // Add action listener to department dropdown
         departmentDropdown.addActionListener(e -> {
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            clearContent();
 
             department.setDepartmentCode(Objects.requireNonNull(departmentDropdown.getSelectedItem()).toString());
             department.viewSingleDepartment(path, false);
@@ -154,14 +157,11 @@ public class GUI extends JFrame {
         });
 
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void addTextFieldsForUpdate() {
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         GridBagConstraints textFieldConstraints = new GridBagConstraints();
         textFieldConstraints.gridx = 0;
@@ -205,15 +205,12 @@ public class GUI extends JFrame {
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void showAllDepartments() {
         java.util.List<String> departments = department.viewAllDepartments(path);
 
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         addHeaderRowCentered();
 
@@ -224,14 +221,11 @@ public class GUI extends JFrame {
         }
 
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void showDepartment() {
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         // Create and add label for department selection
         JLabel selectLabel = new JLabel("Select a department from the drop-down list.");
@@ -252,9 +246,7 @@ public class GUI extends JFrame {
         // Add action listener to department dropdown
         departmentDropdown.addActionListener(e -> {
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            clearContent();
 
             // Add header labels centered
             addHeaderRowCentered();
@@ -266,8 +258,7 @@ public class GUI extends JFrame {
         });
 
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
 
     private void addHeaderRowCentered() {
@@ -306,6 +297,8 @@ public class GUI extends JFrame {
         labelConstraints.gridx = 1;
         labelConstraints.gridy = grid * 2 + 1; // Increase y-coordinate for each set
         contentPanel.add(departmentNameLabel, labelConstraints);
+
+        refreshUi();
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GUI::new);

@@ -23,14 +23,6 @@ public class Payroll extends EmployeeTax{
 
     public Payroll(){}
 
-    public Payroll(LocalDate processedDate, String chqNo, String idNo, String fName, String lName, String deptCode,
-                   String deptName, String position, String trn, String nis, double regPay, double otPay, double gross,
-                   double incomeTax, double nisTax, double eduTax){
-        regularPay = regPay;
-        overtimePay = otPay;
-        grossPay = gross;
-    }
-
     public List<Payroll> calculatePay() {
         List<Payroll> newPayroll = new ArrayList<>();
         StringBuilder chequeNumber = new StringBuilder();
@@ -82,7 +74,7 @@ public class Payroll extends EmployeeTax{
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile()));
 
                 bufferedWriter.write("Date\tCheque No.\tID No.\tF. Name\tL. Name\tDept. Code\tPosition\tHrs. Worked\t" +
-                        "Reg. Pay\tOT. Pay\tGross Pay\tIncome Tax\tNIS\tEducation Tax\tNET PAY");
+                        "Reg. Pay\tOT. Pay\tGross Pay\tNet Pay\tIncome Tax\tNIS Tax\tEducation Tax");
                 bufferedWriter.newLine();
                 bufferedWriter.close();
             }
@@ -94,8 +86,8 @@ public class Payroll extends EmployeeTax{
                     bufferedWriter.write(getProcessedDate() + "\t" + getChequeNumber() + "\t" +
                             getIdNumber() + "\t" + getFirstName() + "\t" + getLastName() + "\t" +
                             getDepartmentCode() + "\t" + getPosition() + "\t" + getHoursWorked() +
-                            "\t" + getRegularPay() + "\t" + getOvertimePay() + "\t" + getGrossPay() + "\t" + getIncomeTax()
-                            + "\t" + getNisTax() + "\t" + getEduTax() + "\t" + getNetPay());
+                            "\t" + getRegularPay() + "\t" + getOvertimePay() + "\t" + getGrossPay() + "\t" + getNetPay()
+                            + "\t" + getIncomeTax() + "\t" + getNisTax() + "\t" + getEduTax());
                     bufferedWriter.newLine();
                 }
                 bufferedWriter.close();
@@ -105,6 +97,49 @@ public class Payroll extends EmployeeTax{
         }
     }
 
+    public boolean viewEmployeePayroll(Path path){
+        boolean isPaid = false;
+        try{
+            if (Files.exists(path)) {
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
+                String line;
+                boolean headerSkipped = false;
+                String[] fileContent;
+
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (!headerSkipped) {
+                        headerSkipped = true;
+                        continue;
+                    }
+                    fileContent = line.split("\t");
+
+                    if (fileContent.length == 15 && fileContent[2].equals(getIdNumber())) {
+                        isPaid = true;
+                        setProcessedDate(LocalDate.parse(fileContent[0]));
+                        setChequeNumber(fileContent[1]);
+                        setFirstName(fileContent[3]);
+                        setLastName(fileContent[4]);
+                        setDepartmentCode(fileContent[5]);
+                        setPosition(fileContent[6]);
+                        setHoursWorked(Float.parseFloat(fileContent[7]));
+                        setRegularPay(Double.parseDouble(fileContent[8]));
+                        setOvertimePay(Double.parseDouble(fileContent[9]));
+                        setGrossPay(Double.parseDouble(fileContent[10]));
+                        setNetPay(Double.parseDouble(fileContent[11]));
+                        setIncomeTax(Double.parseDouble(fileContent[12]));
+                        setNisTax(Double.parseDouble(fileContent[13]));
+                        setEduTax(Double.parseDouble(fileContent[14]));
+                    }
+                }
+                bufferedReader.close();
+            }
+        }catch (IOException e){
+            System.out.println("An error has occurred. " + e);
+        }
+
+        return isPaid;
+    }
     public boolean getPositionRates(){
         boolean ratesRegistered = false;
         try {
@@ -132,6 +167,33 @@ public class Payroll extends EmployeeTax{
             System.out.println("An error has occurred.");
         }
         return ratesRegistered;
+    }
+
+    public boolean getTaxInfo(){
+        boolean taxRegistered = false;
+        try {
+            if (Files.exists(Path.of("tax_info.txt"))){
+                BufferedReader reader = new BufferedReader(new FileReader("tax_info.txt"));
+                String line;
+                boolean headerSkipped = false;
+
+                while((line = reader.readLine()) != null){
+                    if (!headerSkipped){
+                        headerSkipped = true;
+                        continue;
+                    }
+                    String[] fileContent = line.split("\t");
+
+                    if (fileContent.length == 7 && fileContent[0].equals(getIdNumber())){
+                        taxRegistered = true;
+                    }
+                }
+
+            }
+        }catch (IOException e){
+            System.out.println("An error has occurred.");
+        }
+        return taxRegistered;
     }
     public double getRegularPay() {
         return regularPay;

@@ -75,9 +75,9 @@ EMPLOYEES (GUI)
     - Update an existing record (GUI)
     - View a single existing record (GUI)
     - View all existing records by department (GUI)
-    - Create file to store records (GUI)
-    - Validate by search in existing file for newly created record (GUI)
-    - Access and assign the corresponding value of the Department Name from the Department Code (GUI)
+    - Create file to store records (Implemented)
+    - Validate by search in existing file for newly created record (Implemented)
+    - Access and assign the corresponding value of the Department Name from the Department Code (Implemented)
 
 EMPLOYEES TAX
     - Create a new record (Implemented)
@@ -92,22 +92,22 @@ DEPARTMENTS (GUI)
     - Update an existing record (GUI)
     - View a single existing record (GUI)
     - View all existing records (GUI)
-    - Create file to store records (GUI)
-    - Validate by search in existing file for newly created record (GUI)
+    - Create file to store records (Implemented)
+    - Validate by search in existing file for newly created record (Implemented)
 
 POSITIONS (GUI)
     - Create file to store records
     - Validate by search in existing file for newly created record
 
-POSITIONS RATES
-    - Create a new record
-    - Update an existing record
-    - View a single existing record
-    - View all existing records by department
-    - Create file to store records
-    - Validate by search in existing file for newly created record
-    - Access and assign the corresponding value of the Department Name and Department Code
-    - Access and assign the corresponding value of the Position Name and Position ID
+POSITIONS RATES (GUI)
+    - Create a new record (GUI)
+    - Update an existing record (GUI)
+    - View a single existing record (GUI)
+    - View all existing records by department (GUI)
+    - Create file to store records (Implemented)
+    - Validate by search in existing file for newly created record (Implemented)
+    - Access and assign the corresponding value of the Department Name and Department Code (Implemented)
+    - Access and assign the corresponding value of the Position Name and Position ID (Implemented)
 
 
 -   FILES   -

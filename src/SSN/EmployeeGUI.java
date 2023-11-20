@@ -70,11 +70,20 @@ public class EmployeeGUI extends JFrame {
         removeRecordButton.addActionListener(e -> removeEmployee());
     }
 
-    private void registerEmployee(){
+    private void clearContent(){
         // Clear existing components from contentPanel
         contentPanel.removeAll();
         contentPanel.revalidate();
         contentPanel.repaint();
+    }
+    private void refreshUi(){
+        // Refresh the UI
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+    private void registerEmployee(){
+        // Clear existing components from contentPanel
+        clearContent();
 
         GridBagConstraints textFieldConstraints = new GridBagConstraints();
         textFieldConstraints.gridx = 0;
@@ -160,9 +169,7 @@ public class EmployeeGUI extends JFrame {
     }
     private void updateEmployee() {
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
 
         // Create and add label for employee selection
@@ -198,8 +205,7 @@ public class EmployeeGUI extends JFrame {
         });
 
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void removeEmployee(){
         // Clear existing components from contentPanel
@@ -226,9 +232,7 @@ public class EmployeeGUI extends JFrame {
         // Add action listener to department dropdown
         employeeDropdown.addActionListener(e -> {
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            clearContent();
 
             employee.setIdNumber(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
             employee.viewSingleEmployee(path, true);
@@ -320,9 +324,7 @@ public class EmployeeGUI extends JFrame {
         contentPanel.repaint();
     }
     private void showDepartmentEmployees() {
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         // Get a list of department codes
         java.util.List<String> departmentCodes = employee.viewAllDepartments(Path.of("departments.txt"));
@@ -348,10 +350,7 @@ public class EmployeeGUI extends JFrame {
             employee.setDepartmentCode(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
 
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
-
+            clearContent();
             addHeaderRowCentered();
 
             // Get a list of employees for the selected department
