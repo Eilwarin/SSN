@@ -13,11 +13,8 @@ public class Employee extends Department{
     protected String idNumber;
     protected String firstName;
     protected String lastName;
-    private Scanner input;
 
-    public Employee(){
-        input = new Scanner(System.in);
-    }
+    public Employee(){}
 
     public Employee(String idNo, String fName, String lName, String deptCode, String pos){
         idNumber = idNo;
@@ -78,8 +75,9 @@ public class Employee extends Department{
     }
 
 
-    public List<String> viewAllEmployees(Path path){
-        List<String> data = new ArrayList<>();
+    public List<String> viewAllEmployees(Path path, boolean updating){
+        List<String> employeeIds = new ArrayList<>();
+        List<String> departmentEmployees = new ArrayList<>();
         try{
             if (Files.exists(path)){
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
@@ -93,20 +91,28 @@ public class Employee extends Department{
                     }
                     String[] fileContent = line.split("\t");
 
+                    if (fileContent.length == 5){
+                        employeeIds.add(fileContent[0]);
+                    }
+
                     if (fileContent.length == 5 && fileContent[0].substring(0, 4).equals(getDepartmentCode())) {
-                        data.add(fileContent[0]);
+                        departmentEmployees.add(fileContent[0]);
                         setFirstName(fileContent[1]);
                         setLastName(fileContent[2]);
                         setDepartmentName(fileContent[3]);
                         setPosition(fileContent[4]);
                     }
                 }
+                if (!updating){
+                    return departmentEmployees;
+                }
                 bufferedReader.close();
             }
         }catch (IOException e){
             System.out.println("An error has occurred. " + e);
         }
-        return data;
+
+        return employeeIds;
     }
     public void employeeFileProcessing(List<Employee> record, Path path, boolean registered){
         try {

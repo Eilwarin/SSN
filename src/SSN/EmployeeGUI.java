@@ -87,6 +87,11 @@ public class EmployeeGUI extends JFrame {
         JTextField employeeLastName = new JTextField(employee.getLastName(), 15);
         JTextField employeePosition = new JTextField(employee.getPosition(), 15);
 
+        employeeIdNumber.setText(null);
+        employeeFirstName.setText(null);
+        employeeLastName.setText(null);
+        employeePosition.setText(null);
+
         // Create and add labels for text fields
         JLabel idNumberLabel = new JLabel("ID Number:");
         JLabel firstNameLabel = new JLabel("First Name:");
@@ -155,8 +160,8 @@ public class EmployeeGUI extends JFrame {
         selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
         contentPanel.add(selectLabel, selectLabelConstraints);
 
-        // Create and add department dropdown
-        employeeDropdown = new JComboBox<>(employee.viewAllEmployees(path).toArray(new String[0]));
+        java.util.List<String> employeeIdNumbers = employee.viewAllEmployees(path, true);
+        employeeDropdown = new JComboBox<>(employeeIdNumbers.toArray(new String[0]));
         GridBagConstraints dropdownConstraints = new GridBagConstraints();
         dropdownConstraints.gridx = 0;
         dropdownConstraints.gridy = 1;
@@ -182,15 +187,6 @@ public class EmployeeGUI extends JFrame {
         // Refresh the UI
         contentPanel.revalidate();
         contentPanel.repaint();
-    }
-    private void addDropdownList(){
-        // Create and add department dropdown
-        employeeDropdown = new JComboBox<>(employee.viewAllEmployees(path).toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(employeeDropdown, dropdownConstraints);
     }
     private void addTextFieldsForUpdate() {
         // Clear existing components from contentPanel
@@ -269,9 +265,11 @@ public class EmployeeGUI extends JFrame {
         contentPanel.revalidate();
         contentPanel.repaint();
 
-        java.util.List<String> employees = employee.viewAllEmployees(path);
+        // Get a list of department codes
+        java.util.List<String> departmentCodes = employee.viewAllDepartments(Path.of("departments.txt"));
 
-        employeeDropdown = new JComboBox<>(employee.viewAllDepartments(Path.of("departments.txt")).toArray(new String[0]));
+        // Create and add department dropdown
+        employeeDropdown = new JComboBox<>(departmentCodes.toArray(new String[0]));
         GridBagConstraints dropdownConstraints = new GridBagConstraints();
         dropdownConstraints.gridx = 0;
         dropdownConstraints.gridy = 1;
@@ -280,26 +278,36 @@ public class EmployeeGUI extends JFrame {
 
         // Add action listener to department dropdown
         employeeDropdown.addActionListener(e -> {
+            // Set the department code immediately
+            employee.setDepartmentCode(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
+
             // Clear existing components from contentPanel
             contentPanel.removeAll();
             contentPanel.revalidate();
             contentPanel.repaint();
 
-            employee.setDepartmentCode(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
+            addHeaderRowCentered();
+
+            // Get a list of employees for the selected department
+            java.util.List<String> employees = employee.viewAllEmployees(path, false);
+
+            for (int grid = 0; grid < employees.size(); grid++) {
+                employee.setIdNumber(employees.get(grid));
+                employee.viewSingleEmployee(path, false);
+                addLabelsBasedOnOptionCentered(grid);
+            }
+
+            // Refresh the UI
+            contentPanel.revalidate();
+            contentPanel.repaint();
         });
-
-        addHeaderRowCentered();
-
-        for (int grid = 0; grid < employees.size(); grid++) {
-            employee.setIdNumber(employees.get(grid));
-            employee.viewSingleEmployee(path, false);
-            addLabelsBasedOnOptionCentered(grid);
-        }
 
         // Refresh the UI
         contentPanel.revalidate();
         contentPanel.repaint();
     }
+
+
     private void showEmployee() {
         // Clear existing components from contentPanel
         contentPanel.removeAll();
@@ -307,14 +315,20 @@ public class EmployeeGUI extends JFrame {
         contentPanel.repaint();
 
         // Create and add label for department selection
-        JLabel selectLabel = new JLabel("Select a department from the drop-down list.");
+        JLabel selectLabel = new JLabel("Select an Employee ID from the drop-down list.");
         GridBagConstraints selectLabelConstraints = new GridBagConstraints();
         selectLabelConstraints.gridx = 0;
         selectLabelConstraints.gridy = 0;
         selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
         contentPanel.add(selectLabel, selectLabelConstraints);
 
-        addDropdownList();
+        java.util.List<String> employeeIdNumbers = employee.viewAllEmployees(path, true);
+        employeeDropdown = new JComboBox<>(employeeIdNumbers.toArray(new String[0]));
+        GridBagConstraints dropdownConstraints = new GridBagConstraints();
+        dropdownConstraints.gridx = 0;
+        dropdownConstraints.gridy = 1;
+        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+        contentPanel.add(employeeDropdown, dropdownConstraints);
 
         // Add action listener to department dropdown
         employeeDropdown.addActionListener(e -> {
@@ -354,17 +368,15 @@ public class EmployeeGUI extends JFrame {
         JLabel departmentNameLabel = new JLabel("Department Name:");
         JLabel positionLabel = new JLabel("Job Title/Position:");
 
-
-
-        // Add header labels to contentPanel
+        // Adjust gridx values for each label
         contentPanel.add(idNumberLabel, headerConstraints);
         headerConstraints.gridx = 1;
         contentPanel.add(firstNameLabel, headerConstraints);
-        headerConstraints.gridx = 1;
+        headerConstraints.gridx = 2;
         contentPanel.add(lastNameLabel, headerConstraints);
-        headerConstraints.gridx = 1;
+        headerConstraints.gridx = 3;
         contentPanel.add(departmentNameLabel, headerConstraints);
-        headerConstraints.gridx = 1;
+        headerConstraints.gridx = 4;
         contentPanel.add(positionLabel, headerConstraints);
     }
     private void addLabelsBasedOnOptionCentered(int grid) {
@@ -398,6 +410,8 @@ public class EmployeeGUI extends JFrame {
         labelConstraints.gridx = 4;
         labelConstraints.gridy = grid * 2 + 1; // Increase y-coordinate for each set
         contentPanel.add(position, labelConstraints);
+
+
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(EmployeeGUI::new);

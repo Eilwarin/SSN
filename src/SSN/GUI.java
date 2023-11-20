@@ -2,6 +2,8 @@ package SSN;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -119,7 +121,6 @@ public class GUI extends JFrame {
         contentPanel.removeAll();
         contentPanel.revalidate();
         contentPanel.repaint();
-
 
         // Create and add label for department selection
         JLabel selectLabel = new JLabel("Select a department from the drop-down list.");
