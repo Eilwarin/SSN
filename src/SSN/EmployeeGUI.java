@@ -7,10 +7,10 @@ import java.util.Objects;
 
 public class EmployeeGUI extends JFrame {
 
-    private JPanel buttonPanel;
-    private JPanel contentPanel;
+    private final JPanel buttonPanel;
+    private final JPanel contentPanel;
     private JComboBox<String> employeeDropdown;
-    private Employee employee = new Employee();
+    private final Employee employee = new Employee();
     private final Path path = Path.of("employees.txt");
 
     public EmployeeGUI() {
@@ -27,6 +27,7 @@ public class EmployeeGUI extends JFrame {
 
         // Set frame properties
         pack();
+        setSize(1280, 720);
         setLocationRelativeTo(null); // Center the frame on the screen
         setVisible(true);
     }

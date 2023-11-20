@@ -27,6 +27,7 @@ public class RatesGUI extends JFrame {
 
         // Set frame properties
         pack();
+        setSize(1280, 720);
         setLocationRelativeTo(null); // Center the frame on the screen
         setVisible(true);
     }

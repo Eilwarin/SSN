@@ -9,10 +9,10 @@ import java.util.Objects;
 
 public class GUI extends JFrame {
 
-    private JPanel buttonPanel;
-    private JPanel contentPanel;
+    private final JPanel buttonPanel;
+    private final JPanel contentPanel;
     private JComboBox<String> departmentDropdown;
-    private Department department = new Department();
+    private final Department department = new Department();
     private final Path path = Path.of("departments.txt");
 
     public GUI() {
@@ -29,6 +29,7 @@ public class GUI extends JFrame {
 
         // Set frame properties
         pack();
+        setSize(1280, 720);
         setLocationRelativeTo(null); // Center the frame on the screen
         setVisible(true);
     }
