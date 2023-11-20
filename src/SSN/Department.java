@@ -119,7 +119,7 @@ public class Department extends Positions{
         }
     }
 
-    public boolean registered(Path path){
+    public boolean registeredDepartment(Path path){
         boolean registered = false;
         try {
             if(Files.exists(path)){

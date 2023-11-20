@@ -109,7 +109,7 @@ public class GUI extends JFrame {
             // Retrieve values from text fields
             department.setDepartmentCode(departmentCodeTextField.getText());
             department.setDepartmentName(departmentNameTextField.getText());
-            department.departmentFileProcessing(department.createDepartmentRecord(), path, department.registered(path));
+            department.departmentFileProcessing(department.createDepartmentRecord(), path, department.registeredDepartment(path));
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI
@@ -202,7 +202,7 @@ public class GUI extends JFrame {
             // Retrieve values from text fields
             department.setDepartmentCode(departmentCodeTextField.getText());
             department.setDepartmentName(departmentNameTextField.getText());
-            department.departmentFileProcessing(department.createDepartmentRecord(), path, department.registered(path));
+            department.departmentFileProcessing(department.createDepartmentRecord(), path, department.registeredDepartment(path));
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI

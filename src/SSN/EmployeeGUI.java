@@ -150,7 +150,7 @@ public class EmployeeGUI extends JFrame {
             employeeLastName.setText(null);
             employeePosition.setText(null);
 
-            employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.registered(path));
+            employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.validation(path));
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI
@@ -306,19 +306,12 @@ public class EmployeeGUI extends JFrame {
             employee.setDepartmentCode(employee.getIdNumber().substring(0, 4));
             employee.setPositionId(employee.getIdNumber().substring(4, 7));
 
-            JLabel removeMessage = new JLabel("Employee record successfully updated.");
-            GridBagConstraints messageConstraints = new GridBagConstraints();
-            messageConstraints.gridx = 0;
-            messageConstraints.gridy = 0;
-            messageConstraints.insets = new Insets(10, 10, 10, 10);
-            contentPanel.add(removeMessage, messageConstraints);
-
             employeeIdNumber.setText(null);
             employeeFirstName.setText(null);
             employeeLastName.setText(null);
             employeePosition.setText(null);
 
-            employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.registered(path));
+            employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.validation(path));
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI

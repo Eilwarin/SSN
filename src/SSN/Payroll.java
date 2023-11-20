@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Payroll extends PositionRates{
+public class Payroll extends EmployeeTax{
     protected float hoursWorked;
     protected double regularPay;
     protected double overtimePay;
@@ -21,8 +21,7 @@ public class Payroll extends PositionRates{
     protected LocalDate processedDate;
     protected String chequeNumber;
 
-    public Payroll(){
-    }
+    public Payroll(){}
 
     public Payroll(LocalDate processedDate, String chqNo, String idNo, String fName, String lName, String deptCode,
                    String deptName, String position, String trn, String nis, double regPay, double otPay, double gross,
@@ -49,11 +48,24 @@ public class Payroll extends PositionRates{
             chequeNumber.append((char) asciiNumeric);
         }
 
-        setRegularPay((getHoursWorked() - overtime));
+        setRegularPay((getHoursWorked() - overtime) * getPositionRegRate());
 
-        setOvertimePay(overtime);
+        setOvertimePay(overtime * getPositionOtRate());
 
         setGrossPay(getRegularPay() + getOvertimePay());
+
+        setIncomeTaxable(!(getGrossPay() <= getIncomeThreshold()));
+
+        if(isIncomeTaxable()){
+            setTaxableIncome(getGrossPay() - getIncomeThreshold());
+            setIncomeTax(getTaxableIncome() * getIncomeTaxRate());
+            setNisTax(getTaxableIncome() * getNisTaxRate());
+            setEduTax(getTaxableIncome() * getEduTaxRate());
+            setNetPay(getGrossPay() - getIncomeTax() - getEduTax() - getNisTax());
+            setPaidIncomeTax(getPaidIncomeTax() + getIncomeTax());
+            setPaidNisTax(getNisTax() + getIncomeTax());
+            setPaidEduTax(getEduTax() + getIncomeTax());
+        }
 
         setProcessedDate(LocalDate.now());
 
@@ -64,18 +76,7 @@ public class Payroll extends PositionRates{
         return newPayroll;
     }
 
-
-    public void payrollData(Path payroll, Path dept, Path emp){
-//        try {
-//            System.out.print("Enter the employee's ID Number: ");
-//            setIdNumber(input.nextLine());
-//
-//
-//        }catch (IOException e){
-//        }
-    }
-
-    public void payrollFileProcessing(List<Payroll> payrolls, Path path){
+    public void payrollFileProcessing(List<Payroll> payrolls, Path path, boolean ratesRegistered){
         try {
             if (!Files.exists(path)) {
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile()));
@@ -86,48 +87,52 @@ public class Payroll extends PositionRates{
                 bufferedWriter.close();
             }
 
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile(), true));
+            if (ratesRegistered){
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile(), true));
 
-            for (Payroll ignored : payrolls){
-                bufferedWriter.write(getProcessedDate() + "\t" + getChequeNumber() + "\t" +
-                        getIdNumber() + "\t" + getFirstName() + "\t" + getLastName() + "\t" +
-                        getDepartmentCode() + "\t" + getPosition() + "\t" + getHoursWorked() +
-                        "\t" + getRegularPay() + "\t" + getOvertimePay() + "\t" + getGrossPay() + "\t" + getIncomeTax()
-                        + "\t" + getNisTax() + "\t" + getEduTax() + "\t" + getNetPay());
-                bufferedWriter.newLine();
+                for (Payroll ignored : payrolls){
+                    bufferedWriter.write(getProcessedDate() + "\t" + getChequeNumber() + "\t" +
+                            getIdNumber() + "\t" + getFirstName() + "\t" + getLastName() + "\t" +
+                            getDepartmentCode() + "\t" + getPosition() + "\t" + getHoursWorked() +
+                            "\t" + getRegularPay() + "\t" + getOvertimePay() + "\t" + getGrossPay() + "\t" + getIncomeTax()
+                            + "\t" + getNisTax() + "\t" + getEduTax() + "\t" + getNetPay());
+                    bufferedWriter.newLine();
+                }
+                bufferedWriter.close();
             }
-            bufferedWriter.close();
-            System.out.println("Operations completed.");
-
         }catch (IOException e){
             System.out.println("An error occurred " + e);
         }
     }
 
-    //    public void getPositionRates(){
-//        try {
-//            if (Files.exists(Path.of("rates.txt"))){
-//                BufferedReader reader = new BufferedReader(new FileReader("rates.txt"));
-//                String line;
-//                boolean headerSkipped = false;
-//
-//                while((line = reader.readLine()) != null){
-//                    if (!headerSkipped){
-//                        headerSkipped = true;
-//                        continue;
-//                    }
-//                    String[] fileContent = line.split("\t");
-//
-//                    if (fileContent == 4 && fileContent[1].equals(getIdNumber().substring(4, 7))){
-//
-//                    }
-//                }
-//
-//            }
-//        }catch (IOException e){
-//
-//        }
-//    }
+    public boolean getPositionRates(){
+        boolean ratesRegistered = false;
+        try {
+            if (Files.exists(Path.of("rates.txt"))){
+                BufferedReader reader = new BufferedReader(new FileReader("rates.txt"));
+                String line;
+                boolean headerSkipped = false;
+
+                while((line = reader.readLine()) != null){
+                    if (!headerSkipped){
+                        headerSkipped = true;
+                        continue;
+                    }
+                    String[] fileContent = line.split("\t");
+
+                    if (fileContent.length == 5 && fileContent[1].equals(getIdNumber())){
+                        ratesRegistered = true;
+                        setPositionRegRate(Double.parseDouble(fileContent[3]));
+                        setPositionOtRate(Double.parseDouble(fileContent[4]));
+                    }
+                }
+
+            }
+        }catch (IOException e){
+            System.out.println("An error has occurred.");
+        }
+        return ratesRegistered;
+    }
     public double getRegularPay() {
         return regularPay;
     }

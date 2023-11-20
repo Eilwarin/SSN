@@ -140,7 +140,6 @@ public class Employee extends Department{
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
                 String line;
                 boolean headerSkipped = false;
-                String index = getIdNumber();
 
                 while ((line = bufferedReader.readLine()) != null) {
                     if (!headerSkipped){
@@ -149,7 +148,7 @@ public class Employee extends Department{
                     }
                     String[] employees = line.split("\t");
 
-                    if (employees.length == 5  && employees[0].equals(index)) {
+                    if (employees.length == 5  && employees[0].equals(getIdNumber())) {
                         employeeRegistered = true;
                     }
                 }

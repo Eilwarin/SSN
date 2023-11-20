@@ -1,2 +1,4 @@
 Dept. Code	Position ID	Position	Reg. Rate	OT. Rate
 8810	8810700	Project Manager	550.0	825.0
+8800	8800336	Sales Manager	1200.0	1800.0
+8800	8800345	Sales Representative	420.0	630.0

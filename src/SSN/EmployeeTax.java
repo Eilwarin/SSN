@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class EmployeeTax extends Payroll{
+public class EmployeeTax extends PositionRates{
     protected String trn;
     protected String nis;
     protected final double eduTaxRate = 0.0225;
@@ -31,17 +31,6 @@ public class EmployeeTax extends Payroll{
 
     public List<EmployeeTax> createRecord(){
         List<EmployeeTax> newRecord = new ArrayList<>();
-
-        setIncomeTaxable(!(getGrossPay() <= getIncomeThreshold()));
-
-        if(isIncomeTaxable()){
-            setTaxableIncome(getGrossPay() - getIncomeThreshold());
-            setIncomeTax(getTaxableIncome() * getIncomeTaxRate());
-            setNisTax(getTaxableIncome() * getNisTaxRate());
-            setEduTax(getTaxableIncome() * getEduTaxRate());
-            setNetPay(getGrossPay() - getIncomeTax() - getEduTax() - getNisTax());
-            setPaidIncomeTax(getPaidIncomeTax() + getIncomeTax());
-        }
 
         newRecord.add(this);
 
@@ -69,7 +58,7 @@ public class EmployeeTax extends Payroll{
         }
     }
 
-    public boolean registered(Path path){
+    public boolean registeredTax(Path path){
         boolean registered = false;
         try {
             if (Files.exists(path)){
@@ -86,6 +75,9 @@ public class EmployeeTax extends Payroll{
 
                     if (fileContent.length == 7 && fileContent[0].equals(getIdNumber())){
                         registered = true;
+                        setPaidIncomeTax(Double.parseDouble(fileContent[4]));
+                        setPaidNisTax(Double.parseDouble(fileContent[5]));
+                        setPaidEduTax(Double.parseDouble(fileContent[6]));
                     }
                 }
             }
