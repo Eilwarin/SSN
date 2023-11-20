@@ -69,7 +69,6 @@ public class PayrollGUI extends JFrame {
         contentPanel.revalidate();
         contentPanel.repaint();
     }
-
     private void departmentDropdown(){
         // Create and add label for Department selection
         JLabel selectLabel = new JLabel("Select a Department Code from the drop-down list.");
@@ -186,7 +185,6 @@ public class PayrollGUI extends JFrame {
         // Refresh the UI
         refreshUi();
     }
-
     private void viewEmployeePayroll(){
         clearContent();
 

@@ -5,7 +5,7 @@ import java.awt.*;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class GUI extends JFrame {
+public class DepartmentGUI extends JFrame {
 
     private final JPanel buttonPanel;
     private final JPanel contentPanel;
@@ -13,7 +13,7 @@ public class GUI extends JFrame {
     private final Department department = new Department();
     private final Path path = Path.of("departments.txt");
 
-    public GUI() {
+    public DepartmentGUI() {
         setTitle("Departments");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -301,6 +301,6 @@ public class GUI extends JFrame {
         refreshUi();
     }
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(GUI::new);
+        SwingUtilities.invokeLater(DepartmentGUI::new);
     }
 }

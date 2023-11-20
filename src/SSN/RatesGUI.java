@@ -20,7 +20,7 @@ public class RatesGUI extends JFrame {
         buttonPanel = new JPanel(new GridBagLayout());
         contentPanel = new JPanel(new GridBagLayout());
 
-        createTaxButtons();
+        createRateButtons();
 
         add(buttonPanel, BorderLayout.NORTH);
         add(new JScrollPane(contentPanel), BorderLayout.CENTER);
@@ -32,7 +32,7 @@ public class RatesGUI extends JFrame {
         setVisible(true);
     }
 
-    private void createTaxButtons() {
+    private void createRateButtons() {
         // Create department buttons
         JButton addRecordButton = new JButton("Add new record");
         JButton updateRecordButton = new JButton("Update existing record");
