@@ -3,7 +3,6 @@ Dept. Code	Dept. Name
 2203	Software Engineering
 1378	Quality Assurance
 8277	Data Analytics
-4361	Security Operations
 4360	Accounting
 9920	IT & Network Administration
 8800	Sales
@@ -13,3 +12,4 @@ Dept. Code	Dept. Name
 4345	Human Resources
 4318	Business Development
 2289	Research and Development
+4369	Security Operations

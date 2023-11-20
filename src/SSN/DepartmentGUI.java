@@ -114,6 +114,30 @@ public class DepartmentGUI extends JFrame {
         }
         return true; // No non-alphanumeric characters found
     }
+    private void departmentDropdown(){
+        // Create and add label for department selection
+        JLabel selectLabel = new JLabel("Select a Department from the drop-down list.");
+        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
+        selectLabelConstraints.gridx = 0;
+        selectLabelConstraints.gridy = 0;
+        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
+        contentPanel.add(selectLabel, selectLabelConstraints);
+
+        // Create and add department dropdown
+        java.util.List<String> departments = department.viewAllDepartments(path);
+        if (departments.isEmpty()){
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+        }else {
+            departmentDropdown = new JComboBox<>(departments.toArray(new String[0]));
+            GridBagConstraints dropdownConstraints = new GridBagConstraints();
+            dropdownConstraints.gridx = 0;
+            dropdownConstraints.gridy = 1;
+            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+            contentPanel.add(departmentDropdown, dropdownConstraints);
+        }
+
+        refreshUi();
+    }
     private void submitAction(JTextField departmentCodeTextField, JTextField departmentNameTextField) {
         if (validCode(departmentCodeTextField.getText()) && departmentCodeTextField.getText().length() == 4){
             department.setDepartmentCode(departmentCodeTextField.getText());
@@ -188,21 +212,8 @@ public class DepartmentGUI extends JFrame {
     private void updateDepartment() {
         // Clear existing components from contentPanel
         clearContent();
-        // Create and add label for department selection
-        JLabel selectLabel = new JLabel("Select a Department from the drop-down list.");
-        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
-        selectLabelConstraints.gridx = 0;
-        selectLabelConstraints.gridy = 0;
-        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(selectLabel, selectLabelConstraints);
 
-        // Create and add department dropdown
-        departmentDropdown = new JComboBox<>(department.viewAllDepartments(path).toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(departmentDropdown, dropdownConstraints);
+        departmentDropdown();
 
         // Add action listener to department dropdown
         departmentDropdown.addActionListener(e -> {
@@ -259,6 +270,7 @@ public class DepartmentGUI extends JFrame {
         submitButtonConstraints.anchor = GridBagConstraints.CENTER;
 
         submitButton.addActionListener(e -> {
+            department.viewSingleDepartment(path, true);
             // Retrieve values from text fields
             submitAction(departmentCodeTextField, departmentNameTextField);
 
@@ -274,18 +286,20 @@ public class DepartmentGUI extends JFrame {
         refreshUi();
     }
     private void showAllDepartments() {
-        java.util.List<String> departments = department.viewAllDepartments(path);
-
         clearContent();
 
-        addHeaderRowCentered();
+        java.util.List<String> departments = department.viewAllDepartments(path);
+        if (departments.isEmpty()){
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+        }else {
+            addHeaderRowCentered();
 
-        for (int grid = 0; grid < departments.size(); grid++) {
-            department.setDepartmentCode(departments.get(grid));
-            department.viewSingleDepartment(path, false);
-            addLabelsBasedOnOptionCentered(grid);
+            for (int grid = 0; grid < departments.size(); grid++) {
+                department.setDepartmentCode(departments.get(grid));
+                department.viewSingleDepartment(path, false);
+                addLabelsBasedOnOptionCentered(grid);
+            }
         }
-
         // Refresh the UI
         refreshUi();
     }
@@ -293,21 +307,7 @@ public class DepartmentGUI extends JFrame {
         // Clear existing components from contentPanel
         clearContent();
 
-        // Create and add label for department selection
-        JLabel selectLabel = new JLabel("Select a department from the drop-down list.");
-        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
-        selectLabelConstraints.gridx = 0;
-        selectLabelConstraints.gridy = 0;
-        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(selectLabel, selectLabelConstraints);
-
-        // Create and add department dropdown
-        departmentDropdown = new JComboBox<>(department.viewAllDepartments(path).toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(departmentDropdown, dropdownConstraints);
+        departmentDropdown();
 
         // Add action listener to department dropdown
         departmentDropdown.addActionListener(e -> {

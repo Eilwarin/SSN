@@ -65,13 +65,12 @@ public class RatesGUI extends JFrame {
         buttonPanel.add(removeRecordButton, gbc);
 
         // Add action listeners to department buttons
-        addRecordButton.addActionListener(e -> registerRate(true));
+        addRecordButton.addActionListener(e -> registerRate());
         updateRecordButton.addActionListener(e -> updateRate());
         viewSingleRecordButton.addActionListener(e -> showRate());
         viewAllRecordsButton.addActionListener(e -> showDepartmentRates());
         removeRecordButton.addActionListener(e -> removeRate());
     }
-
     private void addBackButton() {
         JButton backButton = new JButton("Back to Menu");
         GridBagConstraints backButtonConstraints = new GridBagConstraints();
@@ -162,7 +161,7 @@ public class RatesGUI extends JFrame {
         }
 
     }
-    private void registerRate(boolean refresh){
+    private void registerRate(){
         clearContent();
 
         GridBagConstraints textFieldConstraints = new GridBagConstraints();
@@ -176,15 +175,9 @@ public class RatesGUI extends JFrame {
         JTextField positionTitle;
         JTextField positionPayRate;
 
-        if (refresh){
-            positionId = new JTextField(15);
-            positionTitle = new JTextField(15);
-            positionPayRate = new JTextField(15);
-        }else {
-            positionId = new JTextField(positionRates.getPositionId(), 15);
-            positionTitle = new JTextField(positionRates.getPosition(), 15);
-            positionPayRate = new JTextField(positionRates.getPosition(), 15);
-        }
+        positionId = new JTextField(15);
+        positionTitle = new JTextField(15);
+        positionPayRate = new JTextField(15);
 
         // Create and add labels for text fields
         JLabel positionIdLabel = new JLabel("Position ID");
@@ -223,7 +216,7 @@ public class RatesGUI extends JFrame {
                 positionRates.setPositionId(positionId.getText());
             }else {
                 JOptionPane.showMessageDialog(this, "Invalid ID Number\n(Must be numeric and seven characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
-                registerRate(true);
+                registerRate();
             }
 
             positionRates.setPosition(positionTitle.getText());
@@ -232,7 +225,7 @@ public class RatesGUI extends JFrame {
                 positionRates.setPositionOtRate(positionRates.getPositionRegRate() * 1.5);
             }else {
                 JOptionPane.showMessageDialog(this, "Invalid Pay Rate\n(Must be numeric.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
-                registerRate(true);
+                registerRate();
             }
 
             positionId.setText(null);
@@ -242,7 +235,7 @@ public class RatesGUI extends JFrame {
             positionRates.fileProcessing(path, positionRates.registeredRates(path));
             JOptionPane.showMessageDialog(this, "Record successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
             clearContent();
-            registerRate(true);
+            registerRate();
         });
         contentPanel.add(submitButton, submitButtonConstraints);
 
