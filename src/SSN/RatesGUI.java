@@ -334,7 +334,6 @@ public class RatesGUI extends JFrame {
 
             positionRates.fileProcessing(path, positionRates.registeredRates(path));
             JOptionPane.showMessageDialog(this, "Record successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
-            clearContent();
             updateRate();
         });
         contentPanel.add(submitButton, submitButtonConstraints);

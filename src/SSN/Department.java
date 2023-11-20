@@ -92,7 +92,7 @@ public class Department extends Positions{
         }
         return data;
     }
-    public void departmentFileProcessing(List<Department> record, Path path, boolean registered){
+    public void departmentFileProcessing(List<Department> record, Path path, boolean registered, boolean updating){
         try {
             if (!Files.exists(path)) {
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile()));
@@ -102,7 +102,7 @@ public class Department extends Positions{
                 bufferedWriter.close();
             }
 
-            if (!registered){
+            if (!registered && updating){
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile(), true));
 
                 for (Department departmentData : record){

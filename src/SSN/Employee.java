@@ -161,7 +161,8 @@ public class Employee extends Department{
         return employeeRegistered;
     }
 
-    public void dataGather(Path path){
+    public boolean dataGather(Path path){
+        boolean departmentExists = false;
         try{
             if (Files.exists(path)) {
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
@@ -177,6 +178,7 @@ public class Employee extends Department{
                     String[] departments = line.split("\t");
 
                     if (departments.length == 2  && departments[0].equals(index)) {
+                        departmentExists = true;
                         setDepartmentName(departments[1]);
                     }
                 }
@@ -185,6 +187,7 @@ public class Employee extends Department{
         }catch (IOException e){
             System.out.println("An error has occurred.\n" + e);
         }
+        return departmentExists;
     }
 
     public String getIdNumber() {

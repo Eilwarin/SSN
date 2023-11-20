@@ -99,6 +99,40 @@ public class EmployeeGUI extends JFrame {
         contentPanel.revalidate();
         contentPanel.repaint();
     }
+    private boolean validId(String id){
+        try {
+            Double.parseDouble(id);
+            return true;
+        }catch (NumberFormatException ignored){
+            return false;
+        }
+    }
+    private boolean validName(String name){
+        int hyphenCount = 0;
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            // Check if the character is not a letter or a hyphen
+            if (!(Character.isLetter(ch) ||
+                    (ch == '-' && hyphenCount == 0 && i > 0 && i < name.length() - 1)
+                    || Character.isWhitespace(ch))) {
+                return false; // Found a non-letter character (excluding one hyphen)
+            }
+            if (ch == '-') {
+                hyphenCount++;
+            }
+        }
+        return true; // No non-letter characters found (excluding one hyphen)
+    }
+    private boolean validPosition(String position){
+        for (int i = 0; i < position.length(); i++) {
+            char ch = position.charAt(i);
+            // Check if the character is not a letter
+            if (!(Character.isLetter(ch) || Character.isWhitespace(ch))) {
+                return false; // Found a non-letter character
+            }
+        }
+        return true; // No non-letter characters found
+    }
     private void registerEmployee(){
         // Clear existing components from contentPanel
         clearContent();
@@ -159,19 +193,35 @@ public class EmployeeGUI extends JFrame {
 
         submitButton.addActionListener(e -> {
             // Retrieve values from text fields
-            employee.setIdNumber(employeeIdNumber.getText());
-            employee.setFirstName(employeeFirstName.getText());
-            employee.setLastName(employeeLastName.getText());
-            employee.setPosition(employeePosition.getText());
-            employee.setDepartmentCode(employee.getIdNumber().substring(0, 4));
-            employee.setPositionId(employee.getIdNumber());
+            employee.setDepartmentCode(employeeIdNumber.getText().substring(0, 4));
+            if (validId(employeeIdNumber.getText()) && employee.dataGather(Path.of("departments.txt"))){
+                employee.setIdNumber(employeeIdNumber.getText());
+                employee.setPositionId(employee.getIdNumber());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid ID Number\n(Must be numeric and 7 characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerEmployee();
+            }
 
-            JLabel removeMessage = new JLabel("Employee record successfully created.");
-            GridBagConstraints messageConstraints = new GridBagConstraints();
-            messageConstraints.gridx = 0;
-            messageConstraints.gridy = 0;
-            messageConstraints.insets = new Insets(10, 10, 10, 10);
-            contentPanel.add(removeMessage, messageConstraints);
+            if (validName(employeeFirstName.getText())){
+                employee.setFirstName(employeeFirstName.getText());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid Name Format\n(Must be alphabetic. Hyphens and spaces allowed.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerEmployee();
+            }
+
+            if (validName(employeeLastName.getText())){
+                employee.setLastName(employeeLastName.getText());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid Name Format\n(Must be alphabetic. Hyphens and spaces allowed.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerEmployee();
+            }
+
+            if (validPosition(employeePosition.getText())){
+                employee.setPosition(employeePosition.getText());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid Name Format\n(Must be alphabetic. Hyphens and spaces allowed.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerEmployee();
+            }
 
             employeeIdNumber.setText(null);
             employeeFirstName.setText(null);
