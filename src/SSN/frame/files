@@ -88,12 +88,12 @@ EMPLOYEES TAX
     - Validate by search in existing file for newly created record
 
 DEPARTMENTS
-    - Create a new record (Implemented)
-    - Update an existing record
-    - View a single existing record (Implemented)
-    - View all existing records (Implemented)
-    - Create file to store records (Implemented)
-    - Validate by search in existing file for newly created record
+    - Create a new record (GUI)
+    - Update an existing record (GUI)
+    - View a single existing record (GUI)
+    - View all existing records (GUI)
+    - Create file to store records (GUI)
+    - Validate by search in existing file for newly created record (GUI)
 
 POSITIONS
     - Create file to store records

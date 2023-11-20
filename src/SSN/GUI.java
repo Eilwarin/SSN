@@ -2,8 +2,6 @@ package SSN;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -13,6 +11,7 @@ public class GUI extends JFrame {
     private JPanel contentPanel;
     private JComboBox<String> departmentDropdown;
     private Department department = new Department();
+    private final Path path = Path.of("departments.txt");
 
     public GUI() {
         setTitle("Departments");
@@ -59,14 +58,155 @@ public class GUI extends JFrame {
         buttonPanel.add(viewAllRecordsButton, gbc);
 
         // Add action listeners to department buttons
-        addRecordButton.addActionListener(e -> showDepartmentView());
-        updateRecordButton.addActionListener(e -> showDepartmentView());
+        addRecordButton.addActionListener(e -> createDepartment());
+        updateRecordButton.addActionListener(e -> updateDepartment());
         viewSingleRecordButton.addActionListener(e -> showDepartmentView());
         viewAllRecordsButton.addActionListener(e -> showAllDepartments());
     }
 
-    private void updateDepartment(){
+    private void createDepartment(){
+        // Clear existing components from contentPanel
+        contentPanel.removeAll();
+        contentPanel.revalidate();
+        contentPanel.repaint();
 
+        GridBagConstraints textFieldConstraints = new GridBagConstraints();
+        textFieldConstraints.gridx = 0;
+        textFieldConstraints.gridy = 1;
+        textFieldConstraints.insets = new Insets(10, 10, 10, 10);
+        textFieldConstraints.anchor = GridBagConstraints.CENTER;
+
+        // Create and add text fields dynamically
+        JTextField departmentCodeTextField = new JTextField(department.getDepartmentCode(), 15);
+        JTextField departmentNameTextField = new JTextField(department.getDepartmentName(), 15);
+
+        // Create and add labels for text fields
+        JLabel departmentCodeLabel = new JLabel("Department Code:");
+        JLabel departmentNameLabel = new JLabel("Department Name:");
+
+        // Add labels and text fields to contentPanel
+        contentPanel.add(departmentCodeLabel, textFieldConstraints);
+        textFieldConstraints.gridx = 1;
+        contentPanel.add(departmentCodeTextField, textFieldConstraints);
+
+        textFieldConstraints.gridx = 0;
+        textFieldConstraints.gridy = 2;
+        contentPanel.add(departmentNameLabel, textFieldConstraints);
+        textFieldConstraints.gridx = 1;
+        contentPanel.add(departmentNameTextField, textFieldConstraints);
+
+        JButton submitButton = new JButton("Submit");
+        GridBagConstraints submitButtonConstraints = new GridBagConstraints();
+        submitButtonConstraints.gridx = 0;
+        submitButtonConstraints.gridy = 3; // Adjust the y-coordinate based on your layout
+        submitButtonConstraints.gridwidth = 2; // Span two columns
+        submitButtonConstraints.insets = new Insets(10, 10, 10, 10);
+        submitButtonConstraints.anchor = GridBagConstraints.CENTER;
+
+        submitButton.addActionListener(e -> {
+            // Retrieve values from text fields
+            department.setDepartmentCode(departmentCodeTextField.getText());
+            department.setDepartmentName(departmentNameTextField.getText());
+            department.departmentFileProcessing(department.createDepartmentRecord(), path, department.registered(path));
+        });
+        contentPanel.add(submitButton, submitButtonConstraints);
+        // Refresh the UI
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+    private void updateDepartment() {
+        // Clear existing components from contentPanel
+        contentPanel.removeAll();
+        contentPanel.revalidate();
+        contentPanel.repaint();
+
+
+        // Create and add label for department selection
+        JLabel selectLabel = new JLabel("Select a department from the drop-down list.");
+        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
+        selectLabelConstraints.gridx = 0;
+        selectLabelConstraints.gridy = 0;
+        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
+        contentPanel.add(selectLabel, selectLabelConstraints);
+
+        // Create and add department dropdown
+        departmentDropdown = new JComboBox<>(department.viewAllDepartments(path).toArray(new String[0]));
+        GridBagConstraints dropdownConstraints = new GridBagConstraints();
+        dropdownConstraints.gridx = 0;
+        dropdownConstraints.gridy = 1;
+        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+        contentPanel.add(departmentDropdown, dropdownConstraints);
+
+        // Add action listener to department dropdown
+        departmentDropdown.addActionListener(e -> {
+            // Clear existing components from contentPanel
+            contentPanel.removeAll();
+            contentPanel.revalidate();
+            contentPanel.repaint();
+
+            department.setDepartmentCode(Objects.requireNonNull(departmentDropdown.getSelectedItem()).toString());
+            department.viewSingleDepartment(path, false);
+
+            // Dynamically create and add centered labels based on selected option
+            addLabelsBasedOnOptionCentered(0);
+            // Dynamically create and add text fields with labels based on selected option
+            addTextFieldsForUpdate();
+        });
+
+        // Refresh the UI
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+    private void addTextFieldsForUpdate() {
+        // Clear existing components from contentPanel
+        contentPanel.removeAll();
+        contentPanel.revalidate();
+        contentPanel.repaint();
+
+        GridBagConstraints textFieldConstraints = new GridBagConstraints();
+        textFieldConstraints.gridx = 0;
+        textFieldConstraints.gridy = 1;
+        textFieldConstraints.insets = new Insets(10, 10, 10, 10);
+        textFieldConstraints.anchor = GridBagConstraints.CENTER;
+
+        // Create and add text fields dynamically
+        JTextField departmentCodeTextField = new JTextField(department.getDepartmentCode(), 15);
+        JTextField departmentNameTextField = new JTextField(department.getDepartmentName(), 15);
+
+        // Create and add labels for text fields
+        JLabel departmentCodeLabel = new JLabel("Department Code:");
+        JLabel departmentNameLabel = new JLabel("Department Name:");
+
+        // Add labels and text fields to contentPanel
+        contentPanel.add(departmentCodeLabel, textFieldConstraints);
+        textFieldConstraints.gridx = 1;
+        contentPanel.add(departmentCodeTextField, textFieldConstraints);
+
+        textFieldConstraints.gridx = 0;
+        textFieldConstraints.gridy = 2;
+        contentPanel.add(departmentNameLabel, textFieldConstraints);
+        textFieldConstraints.gridx = 1;
+        contentPanel.add(departmentNameTextField, textFieldConstraints);
+
+        JButton submitButton = new JButton("Submit");
+        GridBagConstraints submitButtonConstraints = new GridBagConstraints();
+        submitButtonConstraints.gridx = 0;
+        submitButtonConstraints.gridy = 3; // Adjust the y-coordinate based on your layout
+        submitButtonConstraints.gridwidth = 2; // Span two columns
+        submitButtonConstraints.insets = new Insets(10, 10, 10, 10);
+        submitButtonConstraints.anchor = GridBagConstraints.CENTER;
+
+        submitButton.addActionListener(e -> {
+            department.viewSingleDepartment(path, true);
+            // Retrieve values from text fields
+            department.setDepartmentCode(departmentCodeTextField.getText());
+            department.setDepartmentName(departmentNameTextField.getText());
+            department.departmentFileProcessing(department.createDepartmentRecord(), path, department.registered(path));
+        });
+        contentPanel.add(submitButton, submitButtonConstraints);
+        // Refresh the UI
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
     private void showAllDepartments() {
         Path path = Path.of("departments.txt");
@@ -80,8 +220,8 @@ public class GUI extends JFrame {
 
         for (int grid = 0; grid < departments.size(); grid++) {
             department.setDepartmentCode(departments.get(grid));
-            department.viewSingleDepartment(path);
-            addLabelsBasedOnOptionCentered(true, grid);
+            department.viewSingleDepartment(path, false);
+            addLabelsBasedOnOptionCentered(grid);
         }
 
         // Refresh the UI
@@ -121,10 +261,10 @@ public class GUI extends JFrame {
             // Add header labels centered
             addHeaderRowCentered();
             department.setDepartmentCode(Objects.requireNonNull(departmentDropdown.getSelectedItem()).toString());
-            department.viewSingleDepartment(path);
+            department.viewSingleDepartment(path, false);
 
             // Dynamically create and add centered labels based on selected option
-            addLabelsBasedOnOptionCentered(false, 0);
+            addLabelsBasedOnOptionCentered(0);
         });
 
         // Refresh the UI
@@ -148,7 +288,7 @@ public class GUI extends JFrame {
         headerConstraints.gridx = 1;
         contentPanel.add(departmentNameLabel, headerConstraints);
     }
-    private void addLabelsBasedOnOptionCentered(boolean isViewAll, int grid) {
+    private void addLabelsBasedOnOptionCentered(int grid) {
         GridBagConstraints labelConstraints = new GridBagConstraints();
         labelConstraints.gridx = 0;
         labelConstraints.gridy = grid * 2 + 1; // Increase y-coordinate for each set

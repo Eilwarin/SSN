@@ -5,17 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Department extends Positions{
     protected String departmentCode;
     protected String departmentName;
 
-    private Scanner input;
 
-    public Department() {
-        input = new Scanner(System.in);
-    }
+    public Department() {}
 
     public Department(String dpCode, String dpName) {
         departmentCode = dpCode;
@@ -29,13 +25,15 @@ public class Department extends Positions{
 
         return newRecord;
     }
-    public void viewSingleDepartment(Path path){
+    public void viewSingleDepartment(Path path, boolean updateQuery){
+        StringBuilder unedited = new StringBuilder();
         try{
             if (Files.exists(path)) {
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
                 String line;
                 boolean headerSkipped = false;
                 String[] fileContent;
+
 
                 while ((line = bufferedReader.readLine()) != null) {
                     if (!headerSkipped) {
@@ -44,16 +42,27 @@ public class Department extends Positions{
                     }
                     fileContent = line.split("\t");
 
+                    if (fileContent.length == 2 && !fileContent[0].equals(getDepartmentCode())) {
+                        unedited.append(line).append(System.lineSeparator());
+                    }
+
                     if (fileContent.length == 2 && fileContent[0].equals(getDepartmentCode())) {
                         setDepartmentName(fileContent[1]);
                     }
                 }
+                bufferedReader.close();
+            }
+            if (updateQuery){
+                BufferedWriter writer = new BufferedWriter(new FileWriter("departments.txt"));
+                writer.write("Dept. Code\tDept. Name");
+                writer.newLine();
+                writer.write(unedited.toString());
+                writer.close();
             }
         }catch (IOException e){
             System.out.println("An error has occurred. " + e);
         }
     }
-
     public List<String> viewAllDepartments(Path path){
         List<String> data = new ArrayList<>();
         try{
