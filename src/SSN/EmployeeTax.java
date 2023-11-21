@@ -1,13 +1,19 @@
-//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
+// File: EmployeeTax.java
+// Authors: Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
+
+// Package declaration for the EmployeeTax class under the SSN package
 package SSN;
 
+// Import statements for necessary Java classes and libraries
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeeTax extends PositionRates{
+// EmployeeTax class extending PositionRates
+public class EmployeeTax extends PositionRates {
+    // Instance variables specific to tax information
     protected String trn;
     protected String nis;
     protected final double eduTaxRate = 0.0225;
@@ -20,10 +26,10 @@ public class EmployeeTax extends PositionRates{
     protected double paidNisTax;
     protected double paidEduTax;
 
+    // Default constructor
+    public EmployeeTax(){}
 
-    public EmployeeTax(){
-    }
-
+    // Method to create a record of tax information
     public List<EmployeeTax> createRecord(){
         List<EmployeeTax> newRecord = new ArrayList<>();
 
@@ -31,19 +37,23 @@ public class EmployeeTax extends PositionRates{
 
         return newRecord;
     }
+
+    // Method to manage tax information, write to a file, and check registration
     public void taxInformation(Path path, boolean registered, List<EmployeeTax> record){
         try{
+            // Check if the file exists, if not, create and write the header
             if(!Files.exists(path)){
                 BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()));
-                writer.write("ID No.\tTRN\tNIS\tTaxable?\tIncome Tax Paid\tNIS Tax Paid\tEduTax Paid");
+                writer.write("ID No.\tTRN\tNIS");
                 writer.newLine();
                 writer.close();
             }
+
+            // If tax information is not registered, append information to the file
             if(!registered){
                 BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile(), true));
                 for(EmployeeTax tax : record){
-                    writer.write(tax.getIdNumber() + "\t" + tax.getTrn() + "\t" + tax.getNis() + "\t" + tax.isIncomeTaxable()
-                    + "\t" + getPaidIncomeTax() + "\t" + getPaidNisTax() + "\t" + getPaidEduTax());
+                    writer.write(tax.getIdNumber() + "\t" + tax.getTrn() + "\t" + tax.getNis());
                     writer.newLine();
                 }
                 writer.close();
@@ -53,26 +63,28 @@ public class EmployeeTax extends PositionRates{
         }
     }
 
+    // Method to check if tax information is registered for an employee
     public boolean registeredTax(Path path){
         boolean registered = false;
         try {
+            // Check if the file exists
             if (Files.exists(path)){
                 BufferedReader reader = new BufferedReader(new FileReader(path.toFile()));
                 String line;
                 boolean headerSkipped = false;
 
+                // Read each line from the file
                 while((line = reader.readLine()) != null){
+                    // Skip the header
                     if (!headerSkipped){
                         headerSkipped = true;
                         continue;
                     }
                     String[] fileContent = line.split("\t");
 
-                    if (fileContent.length == 7 && fileContent[0].equals(getIdNumber())){
+                    // Check if the line contains information for the requested employee
+                    if (fileContent.length == 3 && fileContent[0].equals(getIdNumber())){
                         registered = true;
-                        setPaidIncomeTax(Double.parseDouble(fileContent[4]));
-                        setPaidNisTax(Double.parseDouble(fileContent[5]));
-                        setPaidEduTax(Double.parseDouble(fileContent[6]));
                     }
                 }
             }
@@ -80,6 +92,8 @@ public class EmployeeTax extends PositionRates{
 
         return registered;
     }
+
+    // Getter and setter methods for tax information attributes
 
     public String getTrn() {
         return trn;

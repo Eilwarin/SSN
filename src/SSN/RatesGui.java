@@ -1,4 +1,5 @@
-//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
+// File: RatesGui.java
+// Authors: Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
 package SSN;
 
 import javax.swing.*;
@@ -6,7 +7,7 @@ import java.awt.*;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class RatesGUI extends JFrame {
+public class RatesGui extends JFrame {
 
     private final JPanel buttonPanel;
     private final JPanel contentPanel;
@@ -15,7 +16,7 @@ public class RatesGUI extends JFrame {
     private final Path path = Path.of("rates.txt");
     private boolean flag = false;
 
-    public RatesGUI() {
+    public RatesGui() {
         setTitle("Position Pay Rates");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -108,6 +109,7 @@ public class RatesGUI extends JFrame {
 
         java.util.List<String> rateIdNumbers = positionRates.viewAllDepartmentRates(path, true);
         if (rateIdNumbers.isEmpty()){
+            flag = true;
             clearContent();
             JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
         }else {
@@ -135,11 +137,13 @@ public class RatesGUI extends JFrame {
     }
     private boolean validRate(String rate){
         try {
-            Double.parseDouble(rate);
-            return true;
+            if(Double.parseDouble(rate) > 0){
+                return true;
+            }
         }catch (NumberFormatException ignored){
             return false;
         }
+        return false;
     }
 
     private void departmentDropdown(){
@@ -239,7 +243,7 @@ public class RatesGUI extends JFrame {
             positionTitle.setText(null);
             positionPayRate.setText(null);
 
-            positionRates.fileProcessing(path, positionRates.registeredRates(path), flag);
+            positionRates.fileProcessing(path, positionRates.registeredRates(path));
             JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             clearContent();
             registerRate();
@@ -341,7 +345,7 @@ public class RatesGUI extends JFrame {
             positionTitle.setText(null);
             positionPayRate.setText(null);
 
-            positionRates.fileProcessing(path, positionRates.registeredRates(path), flag);
+            positionRates.fileProcessing(path, positionRates.registeredRates(path));
             JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             updateRate();
         });

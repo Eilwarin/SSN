@@ -1,4 +1,5 @@
-//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
+// File: PayrollGui.java
+// Authors: Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
 
 package SSN;
 
@@ -6,16 +7,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
 import java.util.Objects;
-public class PayrollGUI extends JFrame {
+public class PayrollGui extends JFrame {
 
     private final JPanel buttonPanel;
     private final JPanel contentPanel;
     private JComboBox<String> payrollDropdown;
     private final Payroll payroll = new Payroll();
     private final Path path = Path.of("payroll.txt");
-    private boolean flag;
+    private boolean flag = false;
 
-    public PayrollGUI() {
+    public PayrollGui() {
         setTitle("Payroll");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -150,15 +151,17 @@ public class PayrollGUI extends JFrame {
 
         departmentDropdown();
 
-        payrollDropdown.addActionListener(e -> {
-            payroll.setDepartmentCode(Objects.requireNonNull(payrollDropdown.getSelectedItem()).toString());
-            clearContent();
-            employeeDropdown(false);
-            payrollDropdown.addActionListener(e1 -> {
-                payroll.setIdNumber(Objects.requireNonNull(payrollDropdown.getSelectedItem()).toString());
-                calculatePay();
+        try {
+            payrollDropdown.addActionListener(e -> {
+                payroll.setDepartmentCode(Objects.requireNonNull(payrollDropdown.getSelectedItem()).toString());
+                clearContent();
+                employeeDropdown(false);
+                payrollDropdown.addActionListener(e1 -> {
+                    payroll.setIdNumber(Objects.requireNonNull(payrollDropdown.getSelectedItem()).toString());
+                    calculatePay();
+                });
             });
-        });
+        }catch (NullPointerException ignored){}
     }
     public void calculatePay(){
         clearContent();
@@ -194,15 +197,18 @@ public class PayrollGUI extends JFrame {
                 payroll.setHoursWorked(Float.parseFloat(hoursWorked.getText()));
             }else {
                 JOptionPane.showMessageDialog(this, "Invalid Number Format.\n(Hours worked must be a positive numeric value.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                processPayroll();
             }
             clearContent();
 
-            if(payroll.getPositionRates() && payroll.getTaxInfo()){
+            if(payroll.getPositionRates()){
                 JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
                 payroll.payrollFileProcessing(payroll.calculatePay(), path, payroll.getPositionRates());
+                processPayroll();
             }else{
                 JOptionPane.showMessageDialog(this, "No pay rate/tax information available for ID Number# " + payroll.getIdNumber() +
                         "\n(Must add Employee's tax information before processing payroll.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                processPayroll();
             }
         });
         contentPanel.add(submitButton, submitButtonConstraints);
@@ -214,41 +220,51 @@ public class PayrollGUI extends JFrame {
 
         employeeDropdown(true);
 
-        payrollDropdown.addActionListener(e -> {
-            payroll.setIdNumber(Objects.requireNonNull(payrollDropdown.getSelectedItem()).toString());
-            if (payroll.viewEmployeePayroll(path)){
-                addHeaderRowCentered();
-                addLabelsBasedOnOptionCentered(0);
-            }else {
-                clearContent();
-                JOptionPane.showMessageDialog(this, "No pay rate/tax information available for ID Number# " + payroll.getIdNumber(), "Attention!", JOptionPane.INFORMATION_MESSAGE);
-            }
+        try{
+            payrollDropdown.addActionListener(e -> {
+                payroll.setIdNumber(Objects.requireNonNull(payrollDropdown.getSelectedItem()).toString());
+                if (payroll.viewEmployeePayroll(path)){
+                    addHeaderRowCentered();
+                    addLabelsBasedOnOptionCentered(0);
+                }else {
+                    clearContent();
+                    JOptionPane.showMessageDialog(this, "No pay rate/tax information available for ID Number# " + payroll.getIdNumber(), "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                    viewEmployeePayroll();
+                }
 
-        });
+            });
+        }catch (NullPointerException ignored){}
+        refreshUi();
     }
+
+    private void getPayrolls() {
+        payroll.setDepartmentCode(Objects.requireNonNull(payrollDropdown.getSelectedItem()).toString());
+        clearContent();
+        java.util.List<String> employees = payroll.viewAllEmployees(Path.of("employees.txt"), false);
+        if (employees.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            viewDepartmentPayroll();
+        } else {
+            addHeaderRowCentered();
+            for (int grid = 0; grid < employees.size(); grid++) {
+                payroll.setIdNumber(employees.get(grid));
+                payroll.viewEmployeePayroll(path);
+                addLabelsBasedOnOptionCentered(grid);
+            }
+        }
+    }
+
     public void viewDepartmentPayroll(){
         clearContent();
         departmentDropdown();
 
-        payrollDropdown.addActionListener(e -> {
-            payroll.setDepartmentCode(Objects.requireNonNull(payrollDropdown.getSelectedItem()).toString());
-            clearContent();
-
-            java.util.List<String> employees = payroll.viewAllEmployees(Path.of("employees.txt"), false);
-            if (employees.isEmpty()){
-                JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
-
-            }else {
-                addHeaderRowCentered();
-                for (int grid = 0; grid < employees.size(); grid++){
-                    payroll.setIdNumber(employees.get(grid));
-                    payroll.viewEmployeePayroll(path);
-                    addLabelsBasedOnOptionCentered(grid);
-                }
-            }
-            //Refresh the UI
-            refreshUi();
-        });
+        try {
+            payrollDropdown.addActionListener(e -> {
+                getPayrolls();
+                //Refresh the UI
+                refreshUi();
+            });
+        }catch (NullPointerException ignored){}
     }
 
     public void addHeaderRowCentered() {

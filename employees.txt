@@ -1,6 +1,0 @@
-ID No.	F. Name	L. Name	Dept. Name	Position
-2203317	Jamari	Ferguson	Software Engineering	Software Engineer
-8277745	Dontray	Blackwood	Data Analytics	Data Analyst
-1378424	Rochelle	Gordon	Quality Assurance	QA Tester
-1378849	Alexi	Brooks	Quality Assurance	QA Tester
-4403216	Rajaire	Thomas	UI Design	UI Designer

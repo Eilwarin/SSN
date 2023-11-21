@@ -1,4 +1,5 @@
-//Created by Dontray Blackwood, Rajaire Thomas, Rochelle Gordon, Alexi Brooks, Jamari Ferguson
+// File: DepartmentGui.java
+// Authors: Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
 package SSN;
 
 import javax.swing.*;
@@ -6,7 +7,7 @@ import java.awt.*;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class DepartmentGUI extends JFrame {
+public class DepartmentGui extends JFrame {
 
     private final JPanel buttonPanel;
     private final JPanel contentPanel;
@@ -14,7 +15,7 @@ public class DepartmentGUI extends JFrame {
     private final Department department = new Department();
     private final Path path = Path.of("departments.txt");
 
-    public DepartmentGUI() {
+    public DepartmentGui() {
         setTitle("Departments");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

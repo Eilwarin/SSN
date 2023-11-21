@@ -1,4 +1,5 @@
-//Created by Rochelle Gordon, Rajaire Thomas, Alexi Brooks, Dontray Blackwood, Jamari Ferguson
+// File: EmployeeGui.java
+// Authors: Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
 package SSN;
 
 import javax.swing.*;
@@ -7,7 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
-public class EmployeeGUI extends JFrame {
+public class EmployeeGui extends JFrame {
 
     private final JPanel buttonPanel;
     private final JPanel contentPanel;
@@ -15,7 +16,7 @@ public class EmployeeGUI extends JFrame {
     private final Employee employee = new Employee();
     private final Path path = Path.of("employees.txt");
 
-    public EmployeeGUI() {
+    public EmployeeGui() {
         setTitle("Employees");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -287,19 +288,20 @@ public class EmployeeGUI extends JFrame {
         java.util.List<String> employeeIdNumbers = employee.viewAllEmployees(path, true);
         employeeDropdown(employeeIdNumbers);
 
-        // Add action listener to employee dropdown
-        employeeDropdown.addActionListener(e -> {
-            // Clear existing components from contentPanel
-            clearContent();
+        try{        // Add action listener to employee dropdown
+            employeeDropdown.addActionListener(e -> {
+                // Clear existing components from contentPanel
+                clearContent();
 
-            employee.setIdNumber(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
-            employee.viewSingleEmployee(path, false);
+                employee.setIdNumber(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
+                employee.viewSingleEmployee(path, false);
 
-            // Dynamically create and add centered labels based on selected option
-            addLabelsBasedOnOptionCentered(0);
-            // Dynamically create and add text fields with labels based on selected option
-            addTextFieldsForUpdate();
-        });
+                // Dynamically create and add centered labels based on selected option
+                addLabelsBasedOnOptionCentered(0);
+                // Dynamically create and add text fields with labels based on selected option
+                addTextFieldsForUpdate();
+            });
+        }catch (NullPointerException ignored){}
 
         // Refresh the UI
         refreshUi();
@@ -450,19 +452,21 @@ public class EmployeeGUI extends JFrame {
 
         employeeDropdown();
 
-        // Add action listener to department dropdown
-        employeeDropdown.addActionListener(e -> {
-            // Clear existing components from contentPanel
-            clearContent();
+        try{
+            // Add action listener to department dropdown
+            employeeDropdown.addActionListener(e -> {
+                // Clear existing components from contentPanel
+                clearContent();
 
-            // Add header labels centered
-            addHeaderRowCentered();
-            employee.setIdNumber(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
-            employee.viewSingleEmployee(path, false);
+                // Add header labels centered
+                addHeaderRowCentered();
+                employee.setIdNumber(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
+                employee.viewSingleEmployee(path, false);
 
-            // Dynamically create and add centered labels based on selected option
-            addLabelsBasedOnOptionCentered(0);
-        });
+                // Dynamically create and add centered labels based on selected option
+                addLabelsBasedOnOptionCentered(0);
+            });
+        }catch (NullPointerException ignored){}
 
         // Refresh the UI
         refreshUi();

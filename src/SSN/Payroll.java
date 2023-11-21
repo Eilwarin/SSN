@@ -54,6 +54,7 @@ public class Payroll extends EmployeeTax {
         setRegularPay((getHoursWorked() - overtime) * getPositionRegRate());
         setOvertimePay(overtime * getPositionOtRate());
         setGrossPay(getRegularPay() + getOvertimePay());
+        setNetPay(getGrossPay() - getIncomeTax() - getEduTax() - getNisTax());
         setIncomeTaxable(getGrossPay() > getIncomeThreshold());
 
         // Calculate taxes and net pay if income is taxable
@@ -63,9 +64,6 @@ public class Payroll extends EmployeeTax {
             setNisTax(getTaxableIncome() * getNisTaxRate());
             setEduTax(getTaxableIncome() * getEduTaxRate());
             setNetPay(getGrossPay() - getIncomeTax() - getEduTax() - getNisTax());
-            setPaidIncomeTax(getPaidIncomeTax() + getIncomeTax());
-            setPaidNisTax(getNisTax() + getIncomeTax());
-            setPaidEduTax(getEduTax() + getIncomeTax());
         }
 
         // Set processed date, cheque number, and add to the payroll list
@@ -207,7 +205,7 @@ public class Payroll extends EmployeeTax {
                     String[] fileContent = line.split("\t");
 
                     // Check if the line contains information for the requested employee
-                    if (fileContent.length == 7 && fileContent[0].equals(getIdNumber())) {
+                    if (fileContent.length == 6 && fileContent[0].equals(getIdNumber())) {
                         taxRegistered = true;
                     }
                 }

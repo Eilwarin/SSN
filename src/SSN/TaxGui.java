@@ -1,4 +1,5 @@
-//
+// File: TaxGui.java
+// Authors: Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
 package SSN;
 
 import javax.swing.*;
@@ -6,7 +7,7 @@ import java.awt.*;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class TaxGUI extends JFrame {
+public class TaxGui extends JFrame {
 
     private final JPanel buttonPanel;
     private final JPanel contentPanel;
@@ -14,7 +15,7 @@ public class TaxGUI extends JFrame {
     private final EmployeeTax tax = new EmployeeTax();
     private final Path path = Path.of("tax_info.txt");
 
-    public TaxGUI() {
+    public TaxGui() {
         setTitle("Employee's Tax Information");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -22,6 +23,7 @@ public class TaxGUI extends JFrame {
         contentPanel = new JPanel(new GridBagLayout());
 
         createTaxButtons();
+        addBackButton();
 
         add(buttonPanel, BorderLayout.NORTH);
         add(new JScrollPane(contentPanel), BorderLayout.CENTER);
@@ -69,6 +71,24 @@ public class TaxGUI extends JFrame {
         viewSingleRecordButton.addActionListener(e -> showEmployee());
         viewAllRecordsButton.addActionListener(e -> showDepartmentEmployees());
         removeRecordButton.addActionListener(e -> removeEmployee());
+    }
+    private void addBackButton() {
+        JButton backButton = new JButton("Back to Menu");
+        GridBagConstraints backButtonConstraints = new GridBagConstraints();
+        backButtonConstraints.gridx = 3;
+        backButtonConstraints.gridy = 1; // Adjust the y-coordinate based on your layout
+        backButtonConstraints.insets = new Insets(10, 10, 10, 10);
+        backButtonConstraints.anchor = GridBagConstraints.CENTER;
+
+        backButton.addActionListener(e -> {
+            // Close the current window
+            dispose();
+
+            // Invoke the main GUI
+            SwingUtilities.invokeLater(Main::new);
+        });
+
+        buttonPanel.add(backButton, backButtonConstraints);
     }
 
     private void clearContent(){
@@ -130,20 +150,31 @@ public class TaxGUI extends JFrame {
 
         submitButton.addActionListener(e -> {
             // Retrieve values from text fields
-            if (validId(employeeIdNumber.getText())){
+            if (validId(employeeIdNumber.getText()) && employeeIdNumber.getText().length() == 7){
                 tax.setIdNumber(employeeIdNumber.getText());
             }else {
-
+                JOptionPane.showMessageDialog(this, "Invalid ID Number\n(Must be numeric and seven characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerEmployee();
             }
-            tax.setTrn(employeeTrn.getText());
-            tax.setNis(employeeNis.getText());
-//            tax.setIncomeTaxable();
+            if (validId(employeeTrn.getText()) && employeeTrn.getText().length() == 9){
+                tax.setTrn(employeeTrn.getText());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid TRN\n(Must be numeric and nine characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerEmployee();
+            }
+            if (validName(employeeNis.getText()) && employeeNis.getText().length() == 7){
+                tax.setNis(employeeNis.getText());
+                tax.taxInformation(path, tax.registeredTax(path), tax.createRecord());
+            }else {
+                JOptionPane.showMessageDialog(this, "Invalid NIS\n(Must be alphanumeric and seven characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+                registerEmployee();
+            }
 
             employeeIdNumber.setText(null);
             employeeTrn.setText(null);
             employeeNis.setText(null);
 
-            tax.taxInformation(path, tax.registeredTax(path), tax.createRecord());
+            refreshUi();
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI
@@ -157,11 +188,11 @@ public class TaxGUI extends JFrame {
             return false;
         }
     }
-    private boolean validName(String dpName){
-        for (int i = 0; i < dpName.length(); i++) {
-            char ch = dpName.charAt(i);
+    private boolean validName(String trn){
+        for (int i = 0; i < trn.length(); i++) {
+            char ch = trn.charAt(i);
             // Check if the character is not an alphanumeric character
-            if (!(Character.isLetterOrDigit(ch) || Character.isWhitespace(ch))) {
+            if (!(Character.isLetterOrDigit(ch))) {
                 return false; // Found a non-alphanumeric character
             }
         }
@@ -187,31 +218,28 @@ public class TaxGUI extends JFrame {
         dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
         contentPanel.add(taxDropdown, dropdownConstraints);
 
-        // Add action listener to employee dropdown
-        taxDropdown.addActionListener(e -> {
-            // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+        try{
+            // Add action listener to employee dropdown
+            taxDropdown.addActionListener(e -> {
+                // Clear existing components from contentPanel
+                clearContent();
 
-            tax.setIdNumber(Objects.requireNonNull(taxDropdown.getSelectedItem()).toString());
-            tax.viewSingleEmployee(path, false);
+                tax.setIdNumber(Objects.requireNonNull(taxDropdown.getSelectedItem()).toString());
+                tax.viewSingleEmployee(path, false);
 
-            // Dynamically create and add centered labels based on selected option
-            addLabelsBasedOnOptionCentered(0);
-            // Dynamically create and add text fields with labels based on selected option
-            addTextFieldsForUpdate();
-        });
+                // Dynamically create and add centered labels based on selected option
+                addLabelsBasedOnOptionCentered(0);
+                // Dynamically create and add text fields with labels based on selected option
+                addTextFieldsForUpdate();
+            });
+        }catch (NullPointerException ignored){}
 
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void removeEmployee(){
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         // Create and add label for employee selection
         JLabel selectLabel = new JLabel("Select an Employee ID Number from the drop-down list.");
@@ -232,9 +260,7 @@ public class TaxGUI extends JFrame {
         // Add action listener to department dropdown
         taxDropdown.addActionListener(e -> {
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            clearContent();
 
             tax.setIdNumber(Objects.requireNonNull(taxDropdown.getSelectedItem()).toString());
             tax.viewSingleEmployee(path, true);
@@ -247,12 +273,11 @@ public class TaxGUI extends JFrame {
             contentPanel.add(removeMessage, messageConstraints);
         });
 
+        refreshUi();
     }
     private void addTextFieldsForUpdate() {
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         GridBagConstraints textFieldConstraints = new GridBagConstraints();
         textFieldConstraints.gridx = 0;
@@ -329,13 +354,10 @@ public class TaxGUI extends JFrame {
         });
         contentPanel.add(submitButton, submitButtonConstraints);
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void showDepartmentEmployees() {
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         // Get a list of department codes
         java.util.List<String> departmentCodes = tax.viewAllDepartments(Path.of("departments.txt"));
@@ -377,19 +399,15 @@ public class TaxGUI extends JFrame {
             }
 
             // Refresh the UI
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            refreshUi();
         });
 
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void showEmployee() {
         // Clear existing components from contentPanel
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         // Create and add label for department selection
         JLabel selectLabel = new JLabel("Select an Employee ID from the drop-down list.");
@@ -410,9 +428,7 @@ public class TaxGUI extends JFrame {
         // Add action listener to department dropdown
         taxDropdown.addActionListener(e -> {
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            clearContent();
 
             // Add header labels centered
             addHeaderRowCentered();
@@ -424,13 +440,10 @@ public class TaxGUI extends JFrame {
         });
 
         // Refresh the UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        refreshUi();
     }
     private void addHeaderRowCentered() {
-        contentPanel.removeAll();
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        clearContent();
 
         GridBagConstraints headerConstraints = new GridBagConstraints();
         headerConstraints.gridx = 0;
@@ -488,9 +501,6 @@ public class TaxGUI extends JFrame {
         labelConstraints.gridy = grid * 2 + 1; // Increase y-coordinate for each set
         contentPanel.add(position, labelConstraints);
 
-
-    }
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(TaxGUI::new);
+        refreshUi();
     }
 }

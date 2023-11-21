@@ -1,19 +1,27 @@
-//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
+// File: Employee.java
+// Authors: Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
+
+// Package declaration for the Employee class under the SSN package
 package SSN;
 
+// Import statements for necessary Java classes and libraries
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Employee extends Department{
+// Employee class extending Department
+public class Employee extends Department {
+    // Instance variables specific to employee information
     protected String idNumber;
     protected String firstName;
     protected String lastName;
 
+    // Default constructor
     public Employee(){}
 
+    // Method to create a record of employee information
     public List<Employee> createEmployeeRecord(){
         List<Employee> newRecord = new ArrayList<>();
 
@@ -21,6 +29,8 @@ public class Employee extends Department{
 
         return newRecord;
     }
+
+    // Method to view information for a single employee, update file, and check registration
     public void viewSingleEmployee(Path path, boolean updateQuery){
         StringBuilder unedited = new StringBuilder();
         try{
@@ -29,7 +39,6 @@ public class Employee extends Department{
                 String line;
                 boolean headerSkipped = false;
                 String[] fileContent;
-
 
                 while ((line = bufferedReader.readLine()) != null) {
                     if (!headerSkipped) {
@@ -64,7 +73,7 @@ public class Employee extends Department{
         }
     }
 
-
+    // Method to view information for all employees and return a list of employee IDs
     public List<String> viewAllEmployees(Path path, boolean updating){
         List<String> employeeIds = new ArrayList<>();
         List<String> departmentEmployees = new ArrayList<>();
@@ -104,6 +113,8 @@ public class Employee extends Department{
 
         return employeeIds;
     }
+
+    // Method to process employee information, write to a file, and check registration
     public void employeeFileProcessing(List<Employee> record, Path path, boolean registered, boolean departmentExists){
         try {
             if (!Files.exists(path)) {
@@ -133,6 +144,7 @@ public class Employee extends Department{
         }
     }
 
+    // Method to check if an employee is registered in the file
     public boolean validation(Path path){
         boolean employeeRegistered = false;
 
@@ -162,6 +174,7 @@ public class Employee extends Department{
         return employeeRegistered;
     }
 
+    // Method to gather data for department
     public boolean dataGather(Path path){
         boolean departmentExists = false;
         try{
@@ -190,6 +203,8 @@ public class Employee extends Department{
         }
         return departmentExists;
     }
+
+    // Getter and setter methods for employee attributes
 
     public String getIdNumber() {
         return idNumber;

@@ -1,24 +1,32 @@
-//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
+// File: Department.java
+// Authors: Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
+
+// Package declaration for the Department class under the SSN package
 package SSN;
 
+// Import statements for necessary Java classes and libraries
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Department extends Positions{
+// Department class extending Positions
+public class Department extends Positions {
+    // Instance variables specific to department information
     protected String departmentCode;
     protected String departmentName;
 
-
+    // Default constructor
     public Department() {}
 
+    // Parameterized constructor
     public Department(String dpCode, String dpName) {
         departmentCode = dpCode;
         departmentName = dpName;
     }
 
+    // Method to create a record of department information
     public List<Department> createDepartmentRecord() {
         List<Department> newRecord = new ArrayList<>();
 
@@ -26,15 +34,16 @@ public class Department extends Positions{
 
         return newRecord;
     }
-    public void viewSingleDepartment(Path path, boolean updateQuery){
+
+    // Method to view information for a single department, update file, and check registration
+    public void viewSingleDepartment(Path path, boolean updateQuery) {
         StringBuilder unedited = new StringBuilder();
-        try{
+        try {
             if (Files.exists(path)) {
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
                 String line;
                 boolean headerSkipped = false;
                 String[] fileContent;
-
 
                 while ((line = bufferedReader.readLine()) != null) {
                     if (!headerSkipped) {
@@ -53,21 +62,23 @@ public class Department extends Positions{
                 }
                 bufferedReader.close();
             }
-            if (updateQuery){
+            if (updateQuery) {
                 BufferedWriter writer = new BufferedWriter(new FileWriter("departments.txt"));
                 writer.write("Dept. Code\tDept. Name");
                 writer.newLine();
                 writer.write(unedited.toString());
                 writer.close();
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("An error has occurred. " + e);
         }
     }
-    public List<String> viewAllDepartments(Path path){
+
+    // Method to view information for all departments and return a list of department codes
+    public List<String> viewAllDepartments(Path path) {
         List<String> data = new ArrayList<>();
-        try{
-            if (Files.exists(path)){
+        try {
+            if (Files.exists(path)) {
                 BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
                 String line;
                 boolean headerSkipped = false;
@@ -88,12 +99,14 @@ public class Department extends Positions{
                 }
                 bufferedReader.close();
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("An error has occurred. " + e);
         }
         return data;
     }
-    public void departmentFileProcessing(List<Department> record, Path path, boolean registered, boolean updating){
+
+    // Method to process department information, write to a file, and check registration
+    public void departmentFileProcessing(List<Department> record, Path path, boolean registered, boolean updating) {
         try {
             if (!Files.exists(path)) {
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile()));
@@ -103,27 +116,26 @@ public class Department extends Positions{
                 bufferedWriter.close();
             }
 
-            if (!registered && updating){
+            if (!registered && updating) {
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile(), true));
 
-                for (Department departmentData : record){
-
+                for (Department departmentData : record) {
                     bufferedWriter.write(departmentData.getDepartmentCode() + "\t" + departmentData.getDepartmentName());
                     bufferedWriter.newLine();
                     setDepartmentCode(departmentData.getDepartmentCode());
                 }
                 bufferedWriter.close();
             }
-
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("An error occurred " + e);
         }
     }
 
-    public boolean registeredDepartment(Path path){
+    // Method to check if a department is registered in the file
+    public boolean registeredDepartment(Path path) {
         boolean registered = false;
         try {
-            if(Files.exists(path)){
+            if (Files.exists(path)) {
                 BufferedReader reader = new BufferedReader(new FileReader(path.toFile()));
                 String line;
                 boolean headerSkipped = false;
@@ -135,16 +147,17 @@ public class Department extends Positions{
                     }
 
                     String[] departments = line.split("\t");
-                    if (departments.length == 2 && departments[0].equals(getDepartmentCode())){
+                    if (departments.length == 2 && departments[0].equals(getDepartmentCode())) {
                         registered = true;
                     }
                 }
             }
-        }catch (IOException ignored){}
+        } catch (IOException ignored) {}
 
         return registered;
     }
 
+    // Getter and setter methods for department attributes
     public String getDepartmentCode() {
         return departmentCode;
     }
