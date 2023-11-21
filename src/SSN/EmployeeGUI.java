@@ -4,6 +4,7 @@ package SSN;
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Objects;
 
 public class EmployeeGUI extends JFrame {
@@ -110,16 +111,7 @@ public class EmployeeGUI extends JFrame {
         contentPanel.add(selectLabel, selectLabelConstraints);
 
         java.util.List<String> employeeIdNumbers = employee.viewAllEmployees(path, true);
-        if (employeeIdNumbers.isEmpty()){
-            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
-        }else {
-            employeeDropdown = new JComboBox<>(employeeIdNumbers.toArray(new String[0]));
-            GridBagConstraints dropdownConstraints = new GridBagConstraints();
-            dropdownConstraints.gridx = 0;
-            dropdownConstraints.gridy = 1;
-            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-            contentPanel.add(employeeDropdown, dropdownConstraints);
-        }
+        employeeDropdown(employeeIdNumbers);
 
     }
     private boolean validId(String id){
@@ -167,17 +159,7 @@ public class EmployeeGUI extends JFrame {
 
         // Get a list of department codes
         java.util.List<String> departmentCodes = employee.viewAllDepartments(Path.of("departments.txt"));
-        if (departmentCodes.isEmpty()){
-            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
-        }else {
-            // Create and add department dropdown
-            employeeDropdown = new JComboBox<>(departmentCodes.toArray(new String[0]));
-            GridBagConstraints dropdownConstraints = new GridBagConstraints();
-            dropdownConstraints.gridx = 0;
-            dropdownConstraints.gridy = 1;
-            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-            contentPanel.add(employeeDropdown, dropdownConstraints);
-        }
+        employeeDropdown(departmentCodes);
     }
     private void registerEmployee(){
         // Clear existing components from contentPanel
@@ -239,7 +221,7 @@ public class EmployeeGUI extends JFrame {
 
             //Writing to the employee file with the new employee's details.
             employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.validation(path), employee.dataGather(departmentFile));
-            JOptionPane.showMessageDialog(this, "Record successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             clearContent();
             registerEmployee();
         });
@@ -295,7 +277,6 @@ public class EmployeeGUI extends JFrame {
         // Clear existing components from contentPanel
         clearContent();
 
-
         // Create and add label for employee selection
         JLabel selectLabel = new JLabel("Select an Employee ID Number from the drop-down list.");
         GridBagConstraints selectLabelConstraints = new GridBagConstraints();
@@ -305,19 +286,12 @@ public class EmployeeGUI extends JFrame {
         contentPanel.add(selectLabel, selectLabelConstraints);
 
         java.util.List<String> employeeIdNumbers = employee.viewAllEmployees(path, true);
-        employeeDropdown = new JComboBox<>(employeeIdNumbers.toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(employeeDropdown, dropdownConstraints);
+        employeeDropdown(employeeIdNumbers);
 
         // Add action listener to employee dropdown
         employeeDropdown.addActionListener(e -> {
             // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            clearContent();
 
             employee.setIdNumber(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
             employee.viewSingleEmployee(path, false);
@@ -331,6 +305,21 @@ public class EmployeeGUI extends JFrame {
         // Refresh the UI
         refreshUi();
     }
+
+    private void employeeDropdown(List<String> employeeIdNumbers) {
+        if (employeeIdNumbers.isEmpty()){
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            clearContent();
+        }else {
+            employeeDropdown = new JComboBox<>(employeeIdNumbers.toArray(new String[0]));
+            GridBagConstraints dropdownConstraints = new GridBagConstraints();
+            dropdownConstraints.gridx = 0;
+            dropdownConstraints.gridy = 1;
+            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+            contentPanel.add(employeeDropdown, dropdownConstraints);
+        }
+    }
+
     private void removeEmployee(){
         // Clear existing components from contentPanel
         clearContent();
@@ -345,7 +334,7 @@ public class EmployeeGUI extends JFrame {
             employee.setIdNumber(Objects.requireNonNull(employeeDropdown.getSelectedItem()).toString());
             employee.viewSingleEmployee(path, true);
 
-            JOptionPane.showMessageDialog(this, "Record successfully removed.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             removeEmployee();
         });
 
@@ -414,7 +403,7 @@ public class EmployeeGUI extends JFrame {
             employeePosition.setText(null);
 
             employee.employeeFileProcessing(employee.createEmployeeRecord(), path, employee.validation(path), employee.dataGather(Path.of("departments.txt")));
-            JOptionPane.showMessageDialog(this, "Record successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             updateEmployee();
         });
         contentPanel.add(submitButton, submitButtonConstraints);

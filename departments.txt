@@ -6,10 +6,10 @@ Dept. Code	Dept. Name
 4360	Accounting
 9920	IT & Network Administration
 8800	Sales
-4403	Design
 8500	Project Management
 4328	Customer Service
 4345	Human Resources
 4318	Business Development
 2289	Research and Development
 4369	Security Operations
+4403	UI Design

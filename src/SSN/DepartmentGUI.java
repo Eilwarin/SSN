@@ -127,6 +127,7 @@ public class DepartmentGUI extends JFrame {
         java.util.List<String> departments = department.viewAllDepartments(path);
         if (departments.isEmpty()){
             JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            clearContent();
         }else {
             departmentDropdown = new JComboBox<>(departments.toArray(new String[0]));
             GridBagConstraints dropdownConstraints = new GridBagConstraints();
@@ -201,7 +202,7 @@ public class DepartmentGUI extends JFrame {
             departmentNameTextField.setText(null);
 
             department.departmentFileProcessing(department.createDepartmentRecord(), path, department.registeredDepartment(path), true);
-            JOptionPane.showMessageDialog(this, "Record successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             clearContent();
             registerDepartment();
         });
@@ -278,7 +279,7 @@ public class DepartmentGUI extends JFrame {
             departmentNameTextField.setText(null);
 
             department.departmentFileProcessing(department.createDepartmentRecord(), path, department.registeredDepartment(path), true);
-            JOptionPane.showMessageDialog(this, "Record successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             updateDepartment();
         });
         contentPanel.add(submitButton, submitButtonConstraints);

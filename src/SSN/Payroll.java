@@ -46,7 +46,7 @@ public class Payroll extends EmployeeTax{
 
         setGrossPay(getRegularPay() + getOvertimePay());
 
-        setIncomeTaxable(!(getGrossPay() <= getIncomeThreshold()));
+        setIncomeTaxable(getGrossPay() > getIncomeThreshold());
 
         if(isIncomeTaxable()){
             setTaxableIncome(getGrossPay() - getIncomeThreshold());

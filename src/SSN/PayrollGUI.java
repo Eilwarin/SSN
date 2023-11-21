@@ -1,3 +1,5 @@
+//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
+
 package SSN;
 
 import javax.swing.*;
@@ -96,13 +98,20 @@ public class PayrollGUI extends JFrame {
         selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
         contentPanel.add(selectLabel, selectLabelConstraints);
 
-        java.util.List<String> rateIdNumbers = payroll.viewAllDepartments(Path.of("departments.txt"));
-        payrollDropdown = new JComboBox<>(rateIdNumbers.toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(payrollDropdown, dropdownConstraints);
+        java.util.List<String> departments = payroll.viewAllDepartments(Path.of("departments.txt"));
+        if (departments.isEmpty()){
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            clearContent();
+        }else {
+            payrollDropdown = new JComboBox<>(departments.toArray(new String[0]));
+            GridBagConstraints dropdownConstraints = new GridBagConstraints();
+            dropdownConstraints.gridx = 0;
+            dropdownConstraints.gridy = 1;
+            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+            contentPanel.add(payrollDropdown, dropdownConstraints);
+        }
+
+        refreshUi();
     }
     public void employeeDropdown(boolean gather){
         // Create and add label for Employee selection
@@ -114,36 +123,26 @@ public class PayrollGUI extends JFrame {
         contentPanel.add(selectLabel, selectLabelConstraints);
 
         java.util.List<String> rateIdNumbers = payroll.viewAllEmployees(Path.of("employees.txt"), gather);
-        payrollDropdown = new JComboBox<>(rateIdNumbers.toArray(new String[0]));
-        GridBagConstraints dropdownConstraints = new GridBagConstraints();
-        dropdownConstraints.gridx = 0;
-        dropdownConstraints.gridy = 1;
-        dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
-        contentPanel.add(payrollDropdown, dropdownConstraints);
-
+        if (rateIdNumbers.isEmpty()){
+            JOptionPane.showMessageDialog(this, "There are no available records.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            clearContent();
+        }else {
+            payrollDropdown = new JComboBox<>(rateIdNumbers.toArray(new String[0]));
+            GridBagConstraints dropdownConstraints = new GridBagConstraints();
+            dropdownConstraints.gridx = 0;
+            dropdownConstraints.gridy = 1;
+            dropdownConstraints.anchor = GridBagConstraints.CENTER; // Center the dropdown
+            contentPanel.add(payrollDropdown, dropdownConstraints);
+        }
         refreshUi();
     }
-
-    public void successMessage(){
-        JLabel removeMessage = new JLabel("Operation successfully completed.");
-        GridBagConstraints messageConstraints = new GridBagConstraints();
-        messageConstraints.gridx = 0;
-        messageConstraints.gridy = 0;
-        messageConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(removeMessage, messageConstraints);
-
-        refreshUi();
-    }
-    public void failureMessage(String reason){
-        clearContent();
-        JLabel removeMessage = new JLabel("Operation could not be completed. " + "(" + reason + ")");
-        GridBagConstraints messageConstraints = new GridBagConstraints();
-        messageConstraints.gridx = 0;
-        messageConstraints.gridy = 0;
-        messageConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(removeMessage, messageConstraints);
-
-        refreshUi();
+    private boolean validHours(String hours){
+        try{
+            Float.parseFloat(hours);
+            return true;
+        }catch (NumberFormatException ignored){
+            return false;
+        }
     }
     public void processPayroll(){
         clearContent();
@@ -190,13 +189,19 @@ public class PayrollGUI extends JFrame {
 
         submitButton.addActionListener(e -> {
             // Retrieve values from text fields
-            payroll.setHoursWorked(Float.parseFloat(hoursWorked.getText()));
-            clearContent();
-            if (payroll.getPositionRates() && payroll.getTaxInfo()){
-                successMessage();
-                payroll.payrollFileProcessing(payroll.calculatePay(), path, payroll.getPositionRates());
+            if (validHours(hoursWorked.getText()) && Float.parseFloat(hoursWorked.getText()) > 0){
+                payroll.setHoursWorked(Float.parseFloat(hoursWorked.getText()));
             }else {
-                failureMessage("No pay rate/tax information available for ID Number# " + payroll.getIdNumber());
+                JOptionPane.showMessageDialog(this, "Invalid Number Format.\n(Hours worked must be a positive numeric value.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            }
+            clearContent();
+
+            if(payroll.getPositionRates() && payroll.getTaxInfo()){
+                JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
+                payroll.payrollFileProcessing(payroll.calculatePay(), path, payroll.getPositionRates());
+            }else{
+                JOptionPane.showMessageDialog(this, "No pay rate/tax information available for ID Number# " + payroll.getIdNumber() +
+                        "\n(Must add Employee's tax information before processing payroll.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         contentPanel.add(submitButton, submitButtonConstraints);
@@ -215,7 +220,7 @@ public class PayrollGUI extends JFrame {
                 addLabelsBasedOnOptionCentered(0);
             }else {
                 clearContent();
-                failureMessage("No record found for ID Number# " + payroll.getIdNumber());
+                JOptionPane.showMessageDialog(this, "No pay rate/tax information available for ID Number# " + payroll.getIdNumber(), "Attention!", JOptionPane.INFORMATION_MESSAGE);
             }
 
         });
@@ -227,22 +232,20 @@ public class PayrollGUI extends JFrame {
         payrollDropdown.addActionListener(e -> {
             payroll.setDepartmentCode(Objects.requireNonNull(payrollDropdown.getSelectedItem()).toString());
             clearContent();
-            addHeaderRowCentered();
 
             java.util.List<String> employees = payroll.viewAllEmployees(Path.of("employees.txt"), false);
+            if (employees.isEmpty()){
+                JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
 
-            if (payroll.viewEmployeePayroll(path)){
+            }else {
+                addHeaderRowCentered();
                 for (int grid = 0; grid < employees.size(); grid++){
                     payroll.setIdNumber(employees.get(grid));
                     payroll.viewEmployeePayroll(path);
                     addLabelsBasedOnOptionCentered(grid);
                 }
-            }else {
-                clearContent();
-                failureMessage("No records found for Department Code# " + payroll.getDepartmentCode());
             }
-
-
+            //Refresh the UI
             refreshUi();
         });
     }
@@ -388,8 +391,5 @@ public class PayrollGUI extends JFrame {
         contentPanel.add(eduTaxLabel, labelConstraints);
 
         refreshUi();
-    }
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(PayrollGUI::new);
     }
 }

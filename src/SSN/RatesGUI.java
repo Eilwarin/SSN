@@ -112,6 +112,7 @@ public class RatesGUI extends JFrame {
         java.util.List<String> rateIdNumbers = positionRates.viewAllDepartmentRates(path, true);
         if (rateIdNumbers.isEmpty()){
             JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            clearContent();
         }else {
             positionsDropdown = new JComboBox<>(rateIdNumbers.toArray(new String[0]));
             GridBagConstraints dropdownConstraints = new GridBagConstraints();
@@ -151,6 +152,7 @@ public class RatesGUI extends JFrame {
         java.util.List<String> departments = positionRates.viewAllDepartments(Path.of("departments.txt"));
         if(departments.isEmpty()){
             JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
+            clearContent();
         }else {
             positionsDropdown = new JComboBox<>(departments.toArray(new String[0]));
             GridBagConstraints dropdownConstraints = new GridBagConstraints();
@@ -233,7 +235,7 @@ public class RatesGUI extends JFrame {
             positionPayRate.setText(null);
 
             positionRates.fileProcessing(path, positionRates.registeredRates(path));
-            JOptionPane.showMessageDialog(this, "Record successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             clearContent();
             registerRate();
         });
@@ -335,7 +337,7 @@ public class RatesGUI extends JFrame {
             positionPayRate.setText(null);
 
             positionRates.fileProcessing(path, positionRates.registeredRates(path));
-            JOptionPane.showMessageDialog(this, "Record successfully updated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             updateRate();
         });
         contentPanel.add(submitButton, submitButtonConstraints);
@@ -357,7 +359,7 @@ public class RatesGUI extends JFrame {
             positionRates.setPositionId(Objects.requireNonNull(positionsDropdown.getSelectedItem()).toString());
             positionRates.viewSingleRates(path, true);
 
-            JOptionPane.showMessageDialog(this, "Record successfully removed.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             removeRate();
         });
     }
@@ -476,8 +478,5 @@ public class RatesGUI extends JFrame {
         labelConstraints.gridx = 4;
         labelConstraints.gridy = grid * 2 + 1; // Increase y-coordinate for each set
         contentPanel.add(overtimeRate, labelConstraints);
-    }
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(RatesGUI::new);
     }
 }
