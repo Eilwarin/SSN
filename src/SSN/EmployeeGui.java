@@ -288,7 +288,8 @@ public class EmployeeGui extends JFrame {
         java.util.List<String> employeeIdNumbers = employee.viewAllEmployees(path, true);
         employeeDropdown(employeeIdNumbers);
 
-        try{        // Add action listener to employee dropdown
+        try{
+            // Add action listener to employee dropdown
             employeeDropdown.addActionListener(e -> {
                 // Clear existing components from contentPanel
                 clearContent();
@@ -307,7 +308,7 @@ public class EmployeeGui extends JFrame {
         refreshUi();
     }
 
-    private void employeeDropdown(List<String> employeeIdNumbers) {
+    private void employeeDropdown(List<String> employeeIdNumbers){
         if (employeeIdNumbers.isEmpty()){
             JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
             clearContent();

@@ -38,6 +38,84 @@ public class EmployeeTax extends PositionRates {
         return newRecord;
     }
 
+    // Method to view information for a single department, update file, and check registration
+    public void viewSingleTax(Path path, boolean updateQuery) {
+        StringBuilder unedited = new StringBuilder();
+        try {
+            if (Files.exists(path)) {
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
+                String line;
+                boolean headerSkipped = false;
+                String[] fileContent;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (!headerSkipped) {
+                        headerSkipped = true;
+                        continue;
+                    }
+                    fileContent = line.split("\t");
+
+                    if (fileContent.length == 3 && !fileContent[0].equals(getIdNumber())) {
+                        unedited.append(line).append(System.lineSeparator());
+                    }
+
+                    if (fileContent.length == 3 && fileContent[0].substring(0, 4).equals(getDepartmentCode())) {
+                        setTrn(fileContent[1]);
+                        setNis(fileContent[2]);
+                    }
+                }
+                bufferedReader.close();
+            }
+            if (updateQuery) {
+                BufferedWriter writer = new BufferedWriter(new FileWriter("tax_info.txt"));
+                writer.write("ID No.\tTRN\tNIS");
+                writer.newLine();
+                writer.write(unedited.toString());
+                writer.close();
+            }
+        } catch (IOException e) {
+            System.out.println("An error has occurred. " + e);
+        }
+    }
+
+    public List<String> viewAllTax(Path path, boolean updating){
+        List<String> employeeIds = new ArrayList<>();
+        List<String> departmentEmployees = new ArrayList<>();
+        try{
+            if (Files.exists(path)){
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(path.toFile()));
+                String line;
+                boolean headerSkipped = false;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (!headerSkipped) {
+                        headerSkipped = true;
+                        continue;
+                    }
+                    String[] fileContent = line.split("\t");
+
+                    if (fileContent.length == 3){
+                        employeeIds.add(fileContent[0]);
+                    }
+
+                    if (fileContent.length == 3 && fileContent[0].equals(getIdNumber())) {
+                        departmentEmployees.add(fileContent[0]);
+                        setTrn(fileContent[1]);
+                        setNis(fileContent[2]);
+                    }
+                }
+                if (!updating){
+                    return departmentEmployees;
+                }
+                bufferedReader.close();
+            }
+        }catch (IOException e){
+            System.out.println("An error has occurred. " + e);
+        }
+
+        return employeeIds;
+    }
+
     // Method to manage tax information, write to a file, and check registration
     public void taxInformation(Path path, boolean registered, List<EmployeeTax> record){
         try{
