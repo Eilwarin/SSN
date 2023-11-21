@@ -13,6 +13,7 @@ public class RatesGUI extends JFrame {
     private JComboBox<String> positionsDropdown;
     private final PositionRates positionRates = new PositionRates();
     private final Path path = Path.of("rates.txt");
+    private boolean flag = false;
 
     public RatesGUI() {
         setTitle("Position Pay Rates");
@@ -103,17 +104,18 @@ public class RatesGUI extends JFrame {
     private void ratesDropdown(){
         // Create and add label for position selection
         JLabel selectLabel = new JLabel("Select a Rate ID from the drop-down list.");
-        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
-        selectLabelConstraints.gridx = 0;
-        selectLabelConstraints.gridy = 0;
-        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(selectLabel, selectLabelConstraints);
+
 
         java.util.List<String> rateIdNumbers = positionRates.viewAllDepartmentRates(path, true);
         if (rateIdNumbers.isEmpty()){
-            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
             clearContent();
+            JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
         }else {
+            GridBagConstraints selectLabelConstraints = new GridBagConstraints();
+            selectLabelConstraints.gridx = 0;
+            selectLabelConstraints.gridy = 0;
+            selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
+            contentPanel.add(selectLabel, selectLabelConstraints);
             positionsDropdown = new JComboBox<>(rateIdNumbers.toArray(new String[0]));
             GridBagConstraints dropdownConstraints = new GridBagConstraints();
             dropdownConstraints.gridx = 0;
@@ -143,17 +145,18 @@ public class RatesGUI extends JFrame {
     private void departmentDropdown(){
         // Create and add label for Department selection
         JLabel selectLabel = new JLabel("Select a Department Code from the drop-down list.");
-        GridBagConstraints selectLabelConstraints = new GridBagConstraints();
-        selectLabelConstraints.gridx = 0;
-        selectLabelConstraints.gridy = 0;
-        selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
-        contentPanel.add(selectLabel, selectLabelConstraints);
 
         java.util.List<String> departments = positionRates.viewAllDepartments(Path.of("departments.txt"));
         if(departments.isEmpty()){
+            flag = true;
             JOptionPane.showMessageDialog(this, "There are no records available.", "Attention!", JOptionPane.INFORMATION_MESSAGE);
             clearContent();
         }else {
+            GridBagConstraints selectLabelConstraints = new GridBagConstraints();
+            selectLabelConstraints.gridx = 0;
+            selectLabelConstraints.gridy = 0;
+            selectLabelConstraints.insets = new Insets(10, 10, 10, 10);
+            contentPanel.add(selectLabel, selectLabelConstraints);
             positionsDropdown = new JComboBox<>(departments.toArray(new String[0]));
             GridBagConstraints dropdownConstraints = new GridBagConstraints();
             dropdownConstraints.gridx = 0;
@@ -217,6 +220,7 @@ public class RatesGUI extends JFrame {
                 positionRates.setDepartmentCode(positionId.getText().substring(0, 4));
                 positionRates.setPositionId(positionId.getText());
             }else {
+                flag = true;
                 JOptionPane.showMessageDialog(this, "Invalid ID Number\n(Must be numeric and seven characters.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
                 registerRate();
             }
@@ -226,6 +230,7 @@ public class RatesGUI extends JFrame {
                 positionRates.setPositionRegRate(Double.parseDouble(positionPayRate.getText()));
                 positionRates.setPositionOtRate(positionRates.getPositionRegRate() * 1.5);
             }else {
+                flag = true;
                 JOptionPane.showMessageDialog(this, "Invalid Pay Rate\n(Must be numeric.)", "Attention!", JOptionPane.INFORMATION_MESSAGE);
                 registerRate();
             }
@@ -234,7 +239,7 @@ public class RatesGUI extends JFrame {
             positionTitle.setText(null);
             positionPayRate.setText(null);
 
-            positionRates.fileProcessing(path, positionRates.registeredRates(path));
+            positionRates.fileProcessing(path, positionRates.registeredRates(path), flag);
             JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             clearContent();
             registerRate();
@@ -250,21 +255,21 @@ public class RatesGUI extends JFrame {
         // Create and add label for employee selection
         ratesDropdown();
 
-        // Add action listener to employee dropdown
-        positionsDropdown.addActionListener(e -> {
-            // Clear existing components from contentPanel
-            contentPanel.removeAll();
-            contentPanel.revalidate();
-            contentPanel.repaint();
+        try{
+            // Add action listener to employee dropdown
+            positionsDropdown.addActionListener(e -> {
+                // Clear existing components from contentPanel
+                clearContent();
 
-            positionRates.setPositionId(Objects.requireNonNull(positionsDropdown.getSelectedItem()).toString());
-            positionRates.viewSingleRates(path, false);
+                positionRates.setPositionId(Objects.requireNonNull(positionsDropdown.getSelectedItem()).toString());
+                positionRates.viewSingleRates(path, false);
 
-            // Dynamically create and add centered labels based on selected option
-            addLabelsBasedOnOptionCentered(0);
-            // Dynamically create and add text fields with labels based on selected option
-            addTextFieldsForUpdate();
-        });
+                // Dynamically create and add centered labels based on selected option
+                addLabelsBasedOnOptionCentered(0);
+                // Dynamically create and add text fields with labels based on selected option
+                addTextFieldsForUpdate();
+            });
+        }catch (NullPointerException ignored){}
 
         // Refresh the UI
         refreshUi();
@@ -336,7 +341,7 @@ public class RatesGUI extends JFrame {
             positionTitle.setText(null);
             positionPayRate.setText(null);
 
-            positionRates.fileProcessing(path, positionRates.registeredRates(path));
+            positionRates.fileProcessing(path, positionRates.registeredRates(path), flag);
             JOptionPane.showMessageDialog(this, "Operations completed.", "Alert", JOptionPane.INFORMATION_MESSAGE);
             updateRate();
         });
@@ -403,19 +408,20 @@ public class RatesGUI extends JFrame {
 
         ratesDropdown();
 
-        // Add action listener to department dropdown
-        positionsDropdown.addActionListener(e -> {
-            // Clear existing components from contentPanel
-            clearContent();
+        try{        // Add action listener to department dropdown
+            positionsDropdown.addActionListener(e -> {
+                // Clear existing components from contentPanel
+                clearContent();
 
-            // Add header labels centered
-            addHeaderRowCentered();
-            positionRates.setPositionId(Objects.requireNonNull(positionsDropdown.getSelectedItem()).toString());
-            positionRates.viewSingleRates(path, false);
+                // Add header labels centered
+                addHeaderRowCentered();
+                positionRates.setPositionId(Objects.requireNonNull(positionsDropdown.getSelectedItem()).toString());
+                positionRates.viewSingleRates(path, false);
 
-            // Dynamically create and add centered labels based on selected option
-            addLabelsBasedOnOptionCentered(0);
-        });
+                // Dynamically create and add centered labels based on selected option
+                addLabelsBasedOnOptionCentered(0);
+            });
+        }catch (NullPointerException ignored){}
 
         // Refresh the UI
         refreshUi();

@@ -1,3 +1,4 @@
+//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
 package SSN;
 
 import java.io.*;

@@ -1,3 +1,4 @@
+//Created by Jamari Ferguson, Dontray Blackwood, Rajaire Thomas, Alexi Brooks, Rochelle Gordon
 package SSN;
 
 import java.io.*;
@@ -95,7 +96,7 @@ public class PositionRates extends Employee{
 
         return positionIds;
     }
-    public void fileProcessing(Path path, boolean registered) {
+    public void fileProcessing(Path path, boolean registered, boolean flag) {
         try{
             if (!Files.exists(path)){
                 BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()));
@@ -104,7 +105,7 @@ public class PositionRates extends Employee{
                 writer.close();
             }
 
-            if (!registered){
+            if (!registered && !flag){
                 BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile(), true));
                 writer.write(getDepartmentCode() + "\t" + getPositionId() + "\t" + getPosition() + "\t" + getPositionRegRate() + "\t" +
                         getPositionOtRate());

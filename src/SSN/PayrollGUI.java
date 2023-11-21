@@ -13,6 +13,7 @@ public class PayrollGUI extends JFrame {
     private JComboBox<String> payrollDropdown;
     private final Payroll payroll = new Payroll();
     private final Path path = Path.of("payroll.txt");
+    private boolean flag;
 
     public PayrollGUI() {
         setTitle("Payroll");

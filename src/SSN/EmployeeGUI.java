@@ -239,7 +239,6 @@ public class EmployeeGUI extends JFrame {
             registerEmployee();
         }
         if (validId(employeeIdNumber.getText())){
-
             employee.setIdNumber(employeeIdNumber.getText());
             employee.setPositionId(employee.getIdNumber());
         }else {
